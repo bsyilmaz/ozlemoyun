@@ -2,6 +2,7 @@
 class SoundManager {
     constructor() {
         this.sounds = {
+            backgroundMusic: new Audio('sounds/retro-arcade-game-music-297305.mp3'),
             babyCry: new Audio('sounds/baby-cry.mp3'),
             babyHeal: new Audio('sounds/baby-heal.mp3'),
             bossMusic: new Audio('sounds/boss_music.mp3'),
@@ -14,11 +15,13 @@ class SoundManager {
             quizWrong: new Audio('sounds/quiz-wrong.mp3')
         };
         
-        // Boss music looping
+        // Looping music
+        this.sounds.backgroundMusic.loop = true;
         this.sounds.bossMusic.loop = true;
         this.sounds.heartBeat.loop = true;
         
         // Volume ayarları
+        this.sounds.backgroundMusic.volume = 0.15;
         this.sounds.bossMusic.volume = 0.3;
         this.sounds.heartBeat.volume = 0.4;
         this.sounds.babyCry.volume = 0.5;
@@ -40,6 +43,22 @@ class SoundManager {
         if (sound) {
             sound.currentTime = 0;
             sound.play().catch(e => console.log('Sound play failed:', e));
+        }
+    }
+    
+    pause(soundName) {
+        const sound = this.sounds[soundName];
+        if (sound) {
+            sound.pause();
+        }
+    }
+    
+    resume(soundName) {
+        if (this.muted) return;
+        
+        const sound = this.sounds[soundName];
+        if (sound) {
+            sound.play().catch(e => console.log('Sound resume failed:', e));
         }
     }
     
@@ -212,6 +231,7 @@ class HospitalGuardGame {
     startGame() {
         console.log('Starting game...');
         this.soundManager.play('buttonClick');
+        this.soundManager.play('backgroundMusic');
         this.gameState = 'MONITORING';
         document.getElementById('start-screen').style.display = 'none';
         this.startGameTimer();
@@ -298,6 +318,9 @@ class HospitalGuardGame {
     startBabyRescueGame(babyId) {
         this.gameState = 'BABY_MINIGAME';
         this.currentCriticalBaby = babyId;
+        
+        // Arka plan müziğini duraklat
+        this.soundManager.pause('backgroundMusic');
         
         // Random mini-game
         const types = ['cpr', 'injection', 'quiz'];
@@ -915,6 +938,9 @@ class HospitalGuardGame {
         // Stop mini game sounds
         this.soundManager.stop('heartBeat');
         
+        // Arka plan müziğini devam ettir
+        this.soundManager.resume('backgroundMusic');
+        
         if (success) {
             this.soundManager.play('babyHeal');
             this.setBabyState(this.currentCriticalBaby, 'saved');
@@ -1023,7 +1049,8 @@ class HospitalGuardGame {
         this.gameState = 'BOSS_FIGHT';
         this.bossHealth = 100;
         
-        // Boss müziği başlat
+        // Arka plan müziğini duraklat ve boss müziği başlat
+        this.soundManager.pause('backgroundMusic');
         this.soundManager.play('bossMusic');
         
         document.getElementById('game-overlay').style.display = 'flex';
@@ -1147,8 +1174,9 @@ class HospitalGuardGame {
         this.score += 500;
         this.gorkemAppeared = false;
         
-        // Boss müziğini durdur
+        // Boss müziğini durdur ve arka plan müziğini devam ettir
         this.soundManager.stop('bossMusic');
+        this.soundManager.resume('backgroundMusic');
         
         document.getElementById('game-overlay').style.display = 'none';
         document.getElementById('boss-fight-game').style.display = 'none';
