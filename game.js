@@ -105,6 +105,8 @@ class HospitalGuardGame {
         this.gorkemAppeared = false;
         this.currentCriticalBaby = null;
         this.currentMiniGameType = null;
+        this.lastMiniGameType = null;
+        this.sameGameCount = 0;
         this.lastCriticalTime = 0;
         this.criticalBabies = [];
         
@@ -359,9 +361,24 @@ class HospitalGuardGame {
         // Arka plan müziğini duraklat
         this.soundManager.pause('backgroundMusic');
         
-        // Random mini-game
+        // Random mini-game (üst üste en fazla 2 kez aynı oyun)
         const types = ['cpr', 'injection', 'quiz'];
-        this.currentMiniGameType = types[Math.floor(Math.random() * types.length)];
+        
+        // Eğer son oyun 2 kez üst üste aynıysa, farklı oyun seç
+        if (this.sameGameCount >= 2) {
+            const availableTypes = types.filter(t => t !== this.lastMiniGameType);
+            this.currentMiniGameType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+        } else {
+            this.currentMiniGameType = types[Math.floor(Math.random() * types.length)];
+        }
+        
+        // Oyun tekrar sayacını güncelle
+        if (this.currentMiniGameType === this.lastMiniGameType) {
+            this.sameGameCount++;
+        } else {
+            this.sameGameCount = 1;
+        }
+        this.lastMiniGameType = this.currentMiniGameType;
         
         // Show overlay
         document.getElementById('game-overlay').style.display = 'flex';
@@ -432,12 +449,12 @@ class HospitalGuardGame {
             
         heartClickable.addEventListener('click', handleClick);
         heartClickable.addEventListener('touchend', (e) => {
-                e.preventDefault();
+            e.preventDefault();
             handleClick();
-            });
+        });
         
-        // Timer
-        let timeLeft = 15;
+        // Timer - 5 saniye
+        let timeLeft = 5;
         this.rescueTimer = setInterval(() => {
             timeLeft--;
             if (timeLeft <= 0 || this.cprClicks >= this.cprTarget) {
@@ -1297,6 +1314,8 @@ class HospitalGuardGame {
         this.gorkemAppeared = false;
         this.currentCriticalBaby = null;
         this.currentMiniGameType = null;
+        this.lastMiniGameType = null;
+        this.sameGameCount = 0;
         this.lastCriticalTime = 0;
         this.criticalBabies = [];
         
