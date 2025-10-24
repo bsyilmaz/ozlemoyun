@@ -45,7 +45,7 @@ class HospitalGuardGame {
         
         this.init();
     }
-    
+
     init() {
         console.log('Initializing game...');
         this.setupEventListeners();
@@ -65,20 +65,20 @@ class HospitalGuardGame {
             lastTouchEnd = now;
         }, { passive: false });
     }
-    
+
     setupEventListeners() {
         // Start button
         const startBtn = document.getElementById('start-btn');
         if (startBtn) {
             startBtn.addEventListener('click', () => this.startGame());
         }
-        
+
         // Restart button
         const restartBtn = document.getElementById('restart-btn');
         if (restartBtn) {
             restartBtn.addEventListener('click', () => this.restartGame());
         }
-        
+
         // Baby clicks (event delegation)
         const babiesContainer = document.getElementById('babies-container');
         if (babiesContainer) {
@@ -89,7 +89,7 @@ class HospitalGuardGame {
                 }
             });
         }
-        
+
         // Tool buttons (event delegation)
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('tool-btn') && this.gameState === 'BOSS_FIGHT') {
@@ -97,14 +97,14 @@ class HospitalGuardGame {
             }
         });
     }
-    
+
     createBabies() {
         const container = document.getElementById('babies-container');
         if (!container) return;
         
         container.innerHTML = '';
         this.babies = [];
-        
+
         for (let i = 0; i < this.maxBabies; i++) {
             const baby = {
                 id: i,
@@ -127,7 +127,7 @@ class HospitalGuardGame {
         
         console.log(`Created ${this.babies.length} babies`);
     }
-    
+
     startGame() {
         console.log('Starting game...');
         this.gameState = 'MONITORING';
@@ -136,7 +136,7 @@ class HospitalGuardGame {
         this.startRandomEvents();
         this.updateUI();
     }
-    
+
     startGameTimer() {
         this.gameTime = 0;
         this.gameTimer = setInterval(() => {
@@ -148,7 +148,7 @@ class HospitalGuardGame {
             }
         }, 1000);
     }
-    
+
     startRandomEvents() {
         // Check for critical babies every second
         this.criticalCheckInterval = setInterval(() => {
@@ -161,11 +161,11 @@ class HospitalGuardGame {
         
         // Görkem artık bebek kaybında geliyor (random yerine)
     }
-    
+
     makeRandomBabyCritical() {
         const normalBabies = this.babies.filter(baby => baby.state === 'normal');
         if (normalBabies.length === 0) return;
-        
+
         const randomBaby = normalBabies[Math.floor(Math.random() * normalBabies.length)];
         this.setBabyState(randomBaby.id, 'critical');
         this.currentCriticalBaby = randomBaby.id;
@@ -177,11 +177,11 @@ class HospitalGuardGame {
             }
         }, this.criticalTimeout);
     }
-    
+
     setBabyState(babyId, state) {
         const baby = this.babies[babyId];
         if (!baby) return;
-        
+
         baby.state = state;
         const element = baby.element;
         
@@ -196,7 +196,7 @@ class HospitalGuardGame {
         };
         statusElement.textContent = statusTexts[state] || 'İyi';
     }
-    
+
     handleBabyClick(babyElement) {
         const babyId = parseInt(babyElement.id.split('-')[1]);
         const baby = this.babies[babyId];
@@ -209,7 +209,7 @@ class HospitalGuardGame {
             this.startBabyRescueGame(babyId);
         }
     }
-    
+
     startBabyRescueGame(babyId) {
         this.gameState = 'BABY_MINIGAME';
         this.currentCriticalBaby = babyId;
@@ -282,11 +282,11 @@ class HospitalGuardGame {
             counter.textContent = `${this.cprClicks}/${this.cprTarget}`;
         }
         
-        if (this.cprClicks >= this.cprTarget) {
+                if (this.cprClicks >= this.cprTarget) {
             if (this.rescueTimer) {
                 clearInterval(this.rescueTimer);
             }
-            this.endBabyRescueGame(true);
+                    this.endBabyRescueGame(true);
         }
     }
     
@@ -339,7 +339,7 @@ class HospitalGuardGame {
             }
         }, 1000);
     }
-    
+
     setupInjectionDragDrop() {
         const syringe = document.getElementById('syringe');
         const injectionZone = document.getElementById('injection-zone');
@@ -456,11 +456,11 @@ class HospitalGuardGame {
             syringe.style.zIndex = '10';
         }, { passive: false });
     }
-    
+            
     checkInjectionCollision(syringe, injectionZone) {
-        const syringeRect = syringe.getBoundingClientRect();
-        const zoneRect = injectionZone.getBoundingClientRect();
-        
+            const syringeRect = syringe.getBoundingClientRect();
+            const zoneRect = injectionZone.getBoundingClientRect();
+            
         // Check collision with more tolerance for mobile
         const tolerance = this.isMobile ? 20 : 10;
         
@@ -469,14 +469,14 @@ class HospitalGuardGame {
             syringeRect.top < (zoneRect.bottom + tolerance) &&
             (syringeRect.bottom - tolerance) > zoneRect.top) {
             
-            this.injectionClicks++;
+                this.injectionClicks++;
             const counter = document.getElementById('injection-counter');
             if (counter) {
                 counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
             }
-            
-            // Visual feedback
-            injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
+                
+                // Visual feedback
+                injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
             injectionZone.style.transform = 'translate(-50%, -50%) scale(1.2)';
             
             // Show success message
@@ -498,23 +498,23 @@ class HospitalGuardGame {
             `;
             document.body.appendChild(successMsg);
             
-            setTimeout(() => {
+                setTimeout(() => {
                 injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
-                injectionZone.style.transform = 'translate(-50%, -50%) scale(1)';
+                    injectionZone.style.transform = 'translate(-50%, -50%) scale(1)';
                 if (successMsg.parentNode) {
                     successMsg.parentNode.removeChild(successMsg);
                 }
-            }, 500);
-            
-            if (this.injectionClicks >= this.injectionTarget) {
+                }, 500);
+                
+                if (this.injectionClicks >= this.injectionTarget) {
                 if (this.rescueTimer) {
                     clearInterval(this.rescueTimer);
                 }
                 setTimeout(() => {
                     this.endBabyRescueGame(true);
                 }, 500);
-            }
-        } else {
+                }
+            } else {
             // Show miss feedback
             const missMsg = document.createElement('div');
             missMsg.textContent = '❌ Kaçırdın!';
@@ -618,7 +618,7 @@ class HospitalGuardGame {
                       border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500;">
                         ${opt}
                     </button>`
-                ).join('')}
+                    ).join('')}
             </div>
         `;
         
@@ -689,7 +689,7 @@ class HospitalGuardGame {
                     if (feedbackMsg.parentNode) {
                         feedbackMsg.parentNode.removeChild(feedbackMsg);
                     }
-                    this.endBabyRescueGame(isCorrect);
+                this.endBabyRescueGame(isCorrect);
                 }, 3000);
             });
         });
@@ -704,7 +704,7 @@ class HospitalGuardGame {
             }
         }, 1000);
     }
-    
+
     endBabyRescueGame(success) {
         // Clear timers
         if (this.rescueTimer) {
@@ -777,7 +777,7 @@ class HospitalGuardGame {
         this.gameState = 'MONITORING';
         this.updateUI();
     }
-    
+
     loseBaby() {
         this.lostCount++;
         
@@ -797,7 +797,7 @@ class HospitalGuardGame {
         
         // Görkem her bebek kaybında geliyor!
         if (!this.gorkemAppeared && this.gameState === 'MONITORING') {
-            setTimeout(() => {
+        setTimeout(() => {
                 if (!this.gorkemAppeared && this.gameState === 'MONITORING') {
                     this.appearGorkem();
                 }
@@ -815,7 +815,7 @@ class HospitalGuardGame {
             this.startBossFight();
         }, 1000);
     }
-    
+
     startBossFight() {
         this.gameState = 'BOSS_FIGHT';
         this.bossHealth = 100;
@@ -824,9 +824,51 @@ class HospitalGuardGame {
         document.getElementById('boss-fight-game').style.display = 'block';
         document.getElementById('baby-rescue-game').style.display = 'none';
         
+        // Rastgele komik Görkem mesajı
+        this.setRandomGorkemMessage();
+        
         this.updateBossHealth();
     }
     
+    setRandomGorkemMessage() {
+        const messages = [
+            '"Benimle kahve içer misin? ☕"',
+            '"Kıbrıstan sigara geldi beraber içelim mi? 🚬"',
+            '"Bütün gece beraberiz 😏"',
+            '"İnstanı alabilir miyim? 📱"',
+            '"Kahve içiyorum, rahatsız etme ☕"',
+            '"Seni izliyorum... 👀"',
+            '"Homurdanıyor... 😤"',
+            '"Nöbetim bitti aslında... 🥱"',
+            '"Bir kahve molası verdim 😎"',
+            '"Patron haklarımı kullanıyorum 💼"',
+            '"Şimdi kahve zamanı ☕✨"',
+            '"Mesai dışı saatlerim bunlar 🕐"',
+            '"Stres atıyorum biraz 😌"',
+            '"Özlemi izlemek yorucu iş 😓"',
+            '"Mola hakkım var benim 🤷"',
+            '"Sadece 5 dakika... ⏰"',
+            '"Numaramı ister misin? 📞"',
+            '"Beraber çay içelim mi? 🍵"',
+            '"Instagram\'dan takip eder misin? 📸"',
+            '"Patronluk böyle bir şey işte 😏"'
+        ];
+        
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        const gorkemStatus = document.querySelector('.gorkem-status');
+        if (gorkemStatus) {
+            gorkemStatus.textContent = randomMessage;
+            gorkemStatus.style.fontSize = '16px';
+            gorkemStatus.style.fontStyle = 'italic';
+            gorkemStatus.style.maxWidth = '400px';
+            gorkemStatus.style.lineHeight = '1.4';
+            gorkemStatus.style.padding = '10px 15px';
+            gorkemStatus.style.background = 'rgba(255, 255, 255, 0.95)';
+            gorkemStatus.style.borderRadius = '12px';
+            gorkemStatus.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
+        }
+    }
+
     handleToolClick(toolButton) {
         const damage = parseInt(toolButton.dataset.damage) || 10;
         this.bossHealth -= damage;
@@ -858,18 +900,18 @@ class HospitalGuardGame {
             this.endBossFight();
         }
     }
-    
+
     updateBossHealth() {
         const healthFill = document.getElementById('boss-health-fill');
         const healthText = document.getElementById('boss-health-text');
         const bossCharacter = document.querySelector('.boss-character');
         
         if (healthFill) {
-            healthFill.style.width = this.bossHealth + '%';
+        healthFill.style.width = this.bossHealth + '%';
         }
         
         if (healthText) {
-            healthText.textContent = this.bossHealth;
+        healthText.textContent = this.bossHealth;
         }
         
         if (bossCharacter) {
@@ -882,16 +924,16 @@ class HospitalGuardGame {
         
         // Change color
         if (healthFill) {
-            if (this.bossHealth > 60) {
-                healthFill.style.background = 'linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%)';
-            } else if (this.bossHealth > 30) {
-                healthFill.style.background = 'linear-gradient(90deg, #ff9800 0%, #ffc107 100%)';
-            } else {
-                healthFill.style.background = 'linear-gradient(90deg, #f44336 0%, #e91e63 100%)';
+        if (this.bossHealth > 60) {
+            healthFill.style.background = 'linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%)';
+        } else if (this.bossHealth > 30) {
+            healthFill.style.background = 'linear-gradient(90deg, #ff9800 0%, #ffc107 100%)';
+        } else {
+            healthFill.style.background = 'linear-gradient(90deg, #f44336 0%, #e91e63 100%)';
             }
         }
     }
-    
+
     endBossFight() {
         this.score += 500;
         this.gorkemAppeared = false;
@@ -903,7 +945,7 @@ class HospitalGuardGame {
         this.showFeedback('Görkem yenildi! +500 puan', 'success');
         this.updateUI();
     }
-    
+
     endGame(victory) {
         this.gameState = 'GAME_OVER';
         
@@ -928,7 +970,7 @@ class HospitalGuardGame {
             this.showFeedback(`Oyun bitti! ${this.lostCount} bebek kaybedildi.`, 'error');
         }
     }
-    
+
     restartGame() {
         // Reset all game state
         this.gameState = 'START';
@@ -958,7 +1000,7 @@ class HospitalGuardGame {
         this.createBabies();
         this.updateUI();
     }
-    
+
     updateUI() {
         this.updateTimer();
         
@@ -980,20 +1022,20 @@ class HospitalGuardGame {
             doctor.classList.add('alert');
         }
     }
-    
+
     updateTimer() {
         const minutes = Math.floor(this.gameTime / 60);
         const seconds = this.gameTime % 60;
         document.getElementById('timer').textContent = 
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
-    
+
     formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
-    
+
     showFeedback(message, type) {
         const feedback = document.createElement('div');
         feedback.textContent = message;
