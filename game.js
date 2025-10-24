@@ -165,6 +165,16 @@ class HospitalGuardGame {
         if (startBtn) {
             startBtn.addEventListener('click', () => this.startGame());
         }
+        
+        // Password input - Enter key
+        const passwordInput = document.getElementById('game-password');
+        if (passwordInput) {
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.startGame();
+                }
+            });
+        }
 
         // Restart button
         const restartBtn = document.getElementById('restart-btn');
@@ -234,6 +244,23 @@ class HospitalGuardGame {
 
     startGame() {
         console.log('Starting game...');
+        
+        // Şifre kontrolü
+        const passwordInput = document.getElementById('game-password');
+        const passwordError = document.getElementById('password-error');
+        const correctPassword = 'ozlem2025'; // Şifreyi buradan değiştirebilirsin
+        
+        if (passwordInput.value !== correctPassword) {
+            passwordError.textContent = '❌ Yanlış şifre! Oyuna erişim yok.';
+            passwordError.style.display = 'block';
+            passwordInput.value = '';
+            passwordInput.focus();
+            this.soundManager.play('injectionFailed'); // Hata sesi
+            return; // Oyunu başlatma
+        }
+        
+        // Şifre doğru - oyunu başlat
+        passwordError.style.display = 'none';
         this.soundManager.play('buttonClick');
         this.soundManager.play('backgroundMusic');
         this.gameState = 'MONITORING';

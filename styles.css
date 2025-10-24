@@ -557,6 +557,41 @@ body {
     font-size: 16px;
 }
 
+.password-input {
+    width: 300px;
+    max-width: 90%;
+    padding: 15px 20px;
+    font-size: 18px;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.password-input:focus {
+    outline: none;
+    border-color: #45a049;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.password-error {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-weight: bold;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
 .start-btn {
     background: #4CAF50;
     color: white;
