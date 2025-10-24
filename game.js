@@ -27,7 +27,7 @@ class HospitalGuardGame {
         this.cprClicks = 0;
         this.cprTarget = 50;
         this.injectionClicks = 0;
-        this.injectionTarget = 3;
+        this.injectionTarget = 7; // 7 farklı yere iğne (hem mobil hem desktop)
         
         // Game settings
         this.maxBabies = 4;
@@ -39,8 +39,7 @@ class HospitalGuardGame {
         // Mobile detection
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (this.isMobile) {
-            this.cprTarget = 30;
-            this.injectionTarget = 2;
+            this.cprTarget = 30; // Mobilde daha kolay CPR
         }
         
         this.init();
@@ -245,22 +244,50 @@ class HospitalGuardGame {
         container.innerHTML = `
             <div class="rescue-header">❤️ Kalp Masajı (CPR)!</div>
             <div class="rescue-instructions">Kalbe hızlıca ${this.cprTarget} kez tıklayın!</div>
-            <div id="cpr-game" style="padding: 20px; cursor: pointer;">
-                <div style="width: 100%; max-width: 350px; height: 350px; margin: 0 auto; 
+            <div id="cpr-game" style="padding: 20px;">
+                <div id="heart-clickable" style="width: 100%; max-width: 350px; height: 350px; margin: 0 auto; 
                      background-image: url('images/kalp.png'); background-size: contain; 
-                     background-repeat: no-repeat; background-position: center; position: relative;">
+                     background-repeat: no-repeat; background-position: center; position: relative;
+                     cursor: pointer; transition: transform 0.1s ease;">
                     <div id="cpr-counter" style="position: absolute; top: 50%; left: 50%; 
                          transform: translate(-50%, -50%); font-size: 48px; font-weight: bold; 
                          color: #f44336; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); 
-                         background: rgba(255,255,255,0.9); padding: 15px 25px; border-radius: 15px;">
+                         background: rgba(255,255,255,0.9); padding: 15px 25px; border-radius: 15px;
+                         pointer-events: none;">
                         ${this.cprClicks}/${this.cprTarget}
                     </div>
                 </div>
             </div>
         `;
         
-        const cprGame = document.getElementById('cpr-game');
-        cprGame.addEventListener('click', () => this.handleCPRClick());
+        const heartClickable = document.getElementById('heart-clickable');
+        
+        const handleClick = () => {
+            this.cprClicks++;
+            const counter = document.getElementById('cpr-counter');
+            if (counter) {
+                counter.textContent = `${this.cprClicks}/${this.cprTarget}`;
+            }
+            
+            // Visual feedback
+            heartClickable.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                heartClickable.style.transform = 'scale(1)';
+            }, 100);
+            
+            if (this.cprClicks >= this.cprTarget) {
+                clearInterval(this.rescueTimer);
+                setTimeout(() => {
+                    this.endBabyRescueGame(true);
+                }, 300);
+            }
+        };
+        
+        heartClickable.addEventListener('click', handleClick);
+        heartClickable.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleClick();
+        });
         
         // Timer
         let timeLeft = 15;
@@ -295,79 +322,109 @@ class HospitalGuardGame {
         
         container.innerHTML = `
             <div class="rescue-header">💉 İğne Yapma!</div>
-            <div class="rescue-instructions">Yeşil alana ${this.injectionTarget} kez tıklayın!</div>
+            <div class="rescue-instructions">Yeşil alanlara ${this.injectionTarget} kez iğne yap!</div>
             <div style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 30px;">
                 <div id="injection-counter" style="font-size: 48px; font-weight: bold; 
                      color: #4CAF50; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
                     ${this.injectionClicks}/${this.injectionTarget}
                 </div>
-                <div id="baby-butt-clickable" style="width: 300px; height: 300px; 
+                <div id="baby-butt-clickable" style="width: 350px; height: 350px; 
                      background-image: url('images/bebekpoposu.png'); background-size: contain; 
                      background-repeat: no-repeat; background-position: center; 
-                     position: relative; cursor: pointer;
-                     transition: transform 0.2s ease;">
-                    <div id="injection-zone" style="position: absolute; top: 50%; left: 50%; 
-                         transform: translate(-50%, -50%); width: 150px; height: 150px; 
-                         background: rgba(76, 175, 80, 0.4); border: 4px dashed #4CAF50; 
+                     position: relative; cursor: crosshair;">
+                    <div id="injection-zone" style="position: absolute; width: 60px; height: 60px; 
+                         background: rgba(76, 175, 80, 0.5); border: 3px dashed #4CAF50; 
                          border-radius: 50%; animation: pulseZone 1.5s infinite;
                          display: flex; align-items: center; justify-content: center;
-                         font-size: 60px; user-select: none; pointer-events: none;">
+                         font-size: 30px; user-select: none; pointer-events: none;
+                         transition: all 0.3s ease;">
                         💉
                     </div>
                 </div>
                 <div style="font-size: 18px; color: #666; text-align: center; font-weight: 600;
                      background: rgba(76, 175, 80, 0.1); padding: 15px 25px; border-radius: 12px;
                      border: 2px solid #4CAF50;">
-                    👆 Yeşil alana tıkla!
+                    🎯 Hareket eden yeşil alana tıkla!
                 </div>
             </div>
         `;
         
-        // Basit tıklama sistemi
         const babyButt = document.getElementById('baby-butt-clickable');
+        const zone = document.getElementById('injection-zone');
+        
+        // İlk pozisyonu ayarla
+        this.moveInjectionZoneToRandomPosition(zone);
         
         const handleClick = (e) => {
             e.preventDefault();
-            this.injectionClicks++;
             
-            const counter = document.getElementById('injection-counter');
-            if (counter) {
-                counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
-            }
+            // Tıklanan pozisyon
+            const rect = babyButt.getBoundingClientRect();
+            const clickX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+            const clickY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
             
-            // Visual feedback
-            babyButt.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                babyButt.style.transform = 'scale(1)';
-            }, 100);
+            const relativeX = clickX - rect.left;
+            const relativeY = clickY - rect.top;
             
-            // Success feedback
-            const zone = document.getElementById('injection-zone');
-            if (zone) {
-                zone.style.background = 'rgba(76, 175, 80, 0.8)';
+            // Zone pozisyonu (merkez)
+            const zoneRect = zone.getBoundingClientRect();
+            const zoneCenterX = zoneRect.left + zoneRect.width / 2 - rect.left;
+            const zoneCenterY = zoneRect.top + zoneRect.height / 2 - rect.top;
+            
+            // Mesafe hesapla
+            const distance = Math.sqrt(
+                Math.pow(relativeX - zoneCenterX, 2) + 
+                Math.pow(relativeY - zoneCenterY, 2)
+            );
+            
+            // Hedef yarıçapı (30px)
+            if (distance <= 30) {
+                // Başarılı iğne!
+                this.injectionClicks++;
+                
+                const counter = document.getElementById('injection-counter');
+                if (counter) {
+                    counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
+                }
+                
+                // Success feedback
+                zone.style.background = 'rgba(76, 175, 80, 0.9)';
                 zone.innerHTML = '✅';
+                zone.style.transform = 'scale(1.3)';
+                
                 setTimeout(() => {
-                    zone.style.background = 'rgba(76, 175, 80, 0.4)';
+                    zone.style.background = 'rgba(76, 175, 80, 0.5)';
+                    zone.innerHTML = '💉';
+                    zone.style.transform = 'scale(1)';
+                    
+                    // Yeni pozisyona taşı
+                    if (this.injectionClicks < this.injectionTarget) {
+                        this.moveInjectionZoneToRandomPosition(zone);
+                    }
+                }, 400);
+                
+                if (this.injectionClicks >= this.injectionTarget) {
+                    clearInterval(this.rescueTimer);
+                    setTimeout(() => {
+                        this.endBabyRescueGame(true);
+                    }, 600);
+                }
+            } else {
+                // Iskaladın!
+                zone.style.background = 'rgba(244, 67, 54, 0.5)';
+                zone.innerHTML = '❌';
+                setTimeout(() => {
+                    zone.style.background = 'rgba(76, 175, 80, 0.5)';
                     zone.innerHTML = '💉';
                 }, 300);
-            }
-            
-            if (this.injectionClicks >= this.injectionTarget) {
-                clearInterval(this.rescueTimer);
-                setTimeout(() => {
-                    this.endBabyRescueGame(true);
-                }, 500);
             }
         };
         
         babyButt.addEventListener('click', handleClick);
-        babyButt.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            handleClick(e);
-        });
+        babyButt.addEventListener('touchend', handleClick);
         
-        // Timer
-        let timeLeft = 15;
+        // Timer - daha uzun süre (20 saniye)
+        let timeLeft = 20;
         this.rescueTimer = setInterval(() => {
             timeLeft--;
             if (timeLeft <= 0 || this.injectionClicks >= this.injectionTarget) {
@@ -375,6 +432,20 @@ class HospitalGuardGame {
                 this.endBabyRescueGame(this.injectionClicks >= this.injectionTarget);
             }
         }, 1000);
+    }
+    
+    moveInjectionZoneToRandomPosition(zone) {
+        // Rastgele pozisyon belirle (kenarlardan biraz içeride)
+        const margin = 50; // px
+        const maxX = 350 - 60 - margin;
+        const maxY = 350 - 60 - margin;
+        
+        const randomX = Math.random() * maxX + margin;
+        const randomY = Math.random() * maxY + margin;
+        
+        zone.style.left = randomX + 'px';
+        zone.style.top = randomY + 'px';
+        zone.style.transform = 'scale(1)';
     }
 
     setupInjectionDragDrop() {
@@ -854,16 +925,16 @@ class HospitalGuardGame {
     }
 
     startBossFight() {
-        this.gameState = 'BOSS_FIGHT';
+            this.gameState = 'BOSS_FIGHT';
         this.bossHealth = 100;
         
-        document.getElementById('game-overlay').style.display = 'flex';
-        document.getElementById('boss-fight-game').style.display = 'block';
-        document.getElementById('baby-rescue-game').style.display = 'none';
-        
+            document.getElementById('game-overlay').style.display = 'flex';
+            document.getElementById('boss-fight-game').style.display = 'block';
+            document.getElementById('baby-rescue-game').style.display = 'none';
+            
         // Rastgele komik Görkem mesajı
         this.setRandomGorkemMessage();
-        
+
         this.updateBossHealth();
     }
     
