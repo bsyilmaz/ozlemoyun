@@ -105,6 +105,8 @@ class HospitalGuardGame {
         this.gorkemAppeared = false;
         this.currentCriticalBaby = null;
         this.currentMiniGameType = null;
+        this.lastCriticalTime = 0;
+        this.criticalBabies = [];
         
         // Timers and intervals
         this.gameTimer = null;
@@ -234,6 +236,10 @@ class HospitalGuardGame {
         this.soundManager.play('backgroundMusic');
         this.gameState = 'MONITORING';
         document.getElementById('start-screen').style.display = 'none';
+        
+        // İlk kritik için 5 saniye bekle
+        this.lastCriticalTime = Date.now() - 7000; // 5 saniye sonra ilk bebek gelebilir
+        
         this.startGameTimer();
         this.startRandomEvents();
         this.updateUI();
@@ -254,9 +260,15 @@ class HospitalGuardGame {
     startRandomEvents() {
         // Check for critical babies every second
         this.criticalCheckInterval = setInterval(() => {
-            if (this.gameState === 'MONITORING' && !this.currentCriticalBaby) {
-                if (Math.random() < this.criticalChance) {
-                    this.makeRandomBabyCritical();
+            if (this.gameState === 'MONITORING') {
+                const currentTime = Date.now();
+                const timeSinceLastCritical = (currentTime - this.lastCriticalTime) / 1000;
+                
+                // En az 12 saniye geçmeli ve maksimum 3 kritik bebek olabilir
+                if (timeSinceLastCritical >= 12 && this.criticalBabies.length < 3) {
+                    if (Math.random() < this.criticalChance) {
+                        this.makeRandomBabyCritical();
+                    }
                 }
             }
         }, 1000);
@@ -270,17 +282,42 @@ class HospitalGuardGame {
         
         const randomBaby = normalBabies[Math.floor(Math.random() * normalBabies.length)];
         this.setBabyState(randomBaby.id, 'critical');
-        this.currentCriticalBaby = randomBaby.id;
         
-        // Bebek ağlama sesi
-        this.soundManager.play('babyCry');
+        // Kritik bebekleri listele
+        if (!this.criticalBabies.includes(randomBaby.id)) {
+            this.criticalBabies.push(randomBaby.id);
+        }
         
-        // Auto-fail after timeout
-        this.autoFailTimeout = setTimeout(() => {
-            if (this.currentCriticalBaby === randomBaby.id && this.gameState === 'MONITORING') {
-                this.loseBaby();
+        // Son kritik zamanı güncelle
+        this.lastCriticalTime = Date.now();
+        
+        // Bebek ağlama sesi (sadece boss fight değilse)
+        if (this.gameState === 'MONITORING') {
+            this.soundManager.play('babyCry');
+        }
+        
+        // Bebek için timeout başlat (mini game sırasında duracak)
+        randomBaby.criticalStartTime = Date.now();
+        randomBaby.remainingTime = this.criticalTimeout;
+        
+        this.startBabyCriticalTimer(randomBaby.id);
+    }
+    
+    startBabyCriticalTimer(babyId) {
+        const baby = this.babies[babyId];
+        if (!baby) return;
+        
+        baby.criticalTimer = setInterval(() => {
+            if (this.gameState === 'MONITORING') {
+                baby.remainingTime -= 100;
+                
+                if (baby.remainingTime <= 0 && baby.state === 'critical') {
+                    clearInterval(baby.criticalTimer);
+                    this.loseBaby(babyId);
+                }
             }
-        }, this.criticalTimeout);
+            // Mini game sırasında süre donuyor, MONITORING'e dönünce devam ediyor
+        }, 100);
     }
 
     setBabyState(babyId, state) {
@@ -306,10 +343,10 @@ class HospitalGuardGame {
         const babyId = parseInt(babyElement.id.split('-')[1]);
         const baby = this.babies[babyId];
         
-        if (baby && baby.state === 'critical') {
-            if (this.autoFailTimeout) {
-                clearTimeout(this.autoFailTimeout);
-                this.autoFailTimeout = null;
+        if (baby && baby.state === 'critical' && this.gameState === 'MONITORING') {
+            // Timer'ı durdur (mini game sırasında donacak)
+            if (baby.criticalTimer) {
+                clearInterval(baby.criticalTimer);
             }
             this.startBabyRescueGame(babyId);
         }
@@ -373,31 +410,31 @@ class HospitalGuardGame {
         const heartClickable = document.getElementById('heart-clickable');
         
         const handleClick = () => {
-            this.cprClicks++;
+                this.cprClicks++;
             const counter = document.getElementById('cpr-counter');
             if (counter) {
                 counter.textContent = `${this.cprClicks}/${this.cprTarget}`;
             }
-            
-            // Visual feedback
+                
+                // Visual feedback
             heartClickable.style.transform = 'scale(0.95)';
-            setTimeout(() => {
+                setTimeout(() => {
                 heartClickable.style.transform = 'scale(1)';
-            }, 100);
-            
-            if (this.cprClicks >= this.cprTarget) {
+                }, 100);
+                
+                if (this.cprClicks >= this.cprTarget) {
                 clearInterval(this.rescueTimer);
                 setTimeout(() => {
                     this.endBabyRescueGame(true);
                 }, 300);
-            }
-        };
-        
+                }
+            };
+            
         heartClickable.addEventListener('click', handleClick);
         heartClickable.addEventListener('touchend', (e) => {
-            e.preventDefault();
+                e.preventDefault();
             handleClick();
-        });
+            });
         
         // Timer
         let timeLeft = 15;
@@ -436,8 +473,8 @@ class HospitalGuardGame {
             <div style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 30px;">
                 <div id="injection-counter" style="font-size: 48px; font-weight: bold; 
                      color: #4CAF50; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
-                    ${this.injectionClicks}/${this.injectionTarget}
-                </div>
+                        ${this.injectionClicks}/${this.injectionTarget}
+                    </div>
                 <div id="baby-butt-clickable" style="width: 350px; height: 350px; 
                      background-image: url('images/bebekpoposu.png'); background-size: contain; 
                      background-repeat: no-repeat; background-position: center; 
@@ -466,12 +503,21 @@ class HospitalGuardGame {
         this.moveInjectionZoneToRandomPosition(zone);
         
         const handleClick = (e) => {
-            e.preventDefault();
+            if (e.cancelable) {
+                e.preventDefault();
+            }
             
             // Tıklanan pozisyon
             const rect = babyButt.getBoundingClientRect();
-            const clickX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-            const clickY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+            let clickX, clickY;
+            
+            if (e.type === 'touchend' && e.changedTouches) {
+                clickX = e.changedTouches[0].clientX;
+                clickY = e.changedTouches[0].clientY;
+            } else {
+                clickX = e.clientX;
+                clickY = e.clientY;
+            }
             
             const relativeX = clickX - rect.left;
             const relativeY = clickY - rect.top;
@@ -495,7 +541,7 @@ class HospitalGuardGame {
                 
                 const counter = document.getElementById('injection-counter');
                 if (counter) {
-                    counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
+                counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
                 }
                 
                 // Success feedback
@@ -517,7 +563,7 @@ class HospitalGuardGame {
                 if (this.injectionClicks >= this.injectionTarget) {
                     clearInterval(this.rescueTimer);
                     setTimeout(() => {
-                        this.endBabyRescueGame(true);
+                    this.endBabyRescueGame(true);
                     }, 600);
                 }
             } else {
@@ -533,7 +579,7 @@ class HospitalGuardGame {
         };
         
         babyButt.addEventListener('click', handleClick);
-        babyButt.addEventListener('touchend', handleClick);
+        babyButt.addEventListener('touchend', handleClick, { passive: false });
         
         // Timer - daha uzun süre (20 saniye)
         let timeLeft = 20;
@@ -947,6 +993,12 @@ class HospitalGuardGame {
             this.savedCount++;
             this.score += 100;
             
+            // Kritik listeden çıkar
+            const index = this.criticalBabies.indexOf(this.currentCriticalBaby);
+            if (index > -1) {
+                this.criticalBabies.splice(index, 1);
+            }
+            
             const savedBabyId = this.currentCriticalBaby;
             setTimeout(() => {
                 this.setBabyState(savedBabyId, 'normal');
@@ -960,9 +1012,19 @@ class HospitalGuardGame {
             const lostBabyId = this.currentCriticalBaby;
             this.currentCriticalBaby = null;
             
+            // Kritik listeden çıkar
+            const index = this.criticalBabies.indexOf(lostBabyId);
+            if (index > -1) {
+                this.criticalBabies.splice(index, 1);
+            }
+            
             // loseBaby'yi çağır (Görkem gelecek)
             this.lostCount++;
             if (lostBabyId !== null) {
+                const baby = this.babies[lostBabyId];
+                if (baby && baby.criticalTimer) {
+                    clearInterval(baby.criticalTimer);
+                }
                 this.setBabyState(lostBabyId, 'normal');
             }
             
@@ -1008,11 +1070,23 @@ class HospitalGuardGame {
         this.updateUI();
     }
 
-    loseBaby() {
+    loseBaby(babyId) {
         this.lostCount++;
         
-        if (this.currentCriticalBaby !== null) {
-            this.setBabyState(this.currentCriticalBaby, 'normal');
+        const lostBabyId = babyId !== undefined ? babyId : this.currentCriticalBaby;
+        
+        if (lostBabyId !== null) {
+            const baby = this.babies[lostBabyId];
+            if (baby && baby.criticalTimer) {
+                clearInterval(baby.criticalTimer);
+            }
+            this.setBabyState(lostBabyId, 'normal');
+            
+            // Kritik listeden çıkar
+            const index = this.criticalBabies.indexOf(lostBabyId);
+            if (index > -1) {
+                this.criticalBabies.splice(index, 1);
+            }
         }
         
         this.showFeedback(`Bebek kaybedildi! (${this.lostCount}/100)`, 'error');
@@ -1051,15 +1125,16 @@ class HospitalGuardGame {
         
         // Arka plan müziğini duraklat ve boss müziği başlat
         this.soundManager.pause('backgroundMusic');
+        this.soundManager.stop('babyCry'); // Bebek ağlama sesini kes
         this.soundManager.play('bossMusic');
         
-        document.getElementById('game-overlay').style.display = 'flex';
-        document.getElementById('boss-fight-game').style.display = 'block';
-        document.getElementById('baby-rescue-game').style.display = 'none';
-        
+            document.getElementById('game-overlay').style.display = 'flex';
+            document.getElementById('boss-fight-game').style.display = 'block';
+            document.getElementById('baby-rescue-game').style.display = 'none';
+            
         // Rastgele komik Görkem mesajı
         this.setRandomGorkemMessage();
-        
+
         this.updateBossHealth();
     }
     
@@ -1222,6 +1297,8 @@ class HospitalGuardGame {
         this.gorkemAppeared = false;
         this.currentCriticalBaby = null;
         this.currentMiniGameType = null;
+        this.lastCriticalTime = 0;
+        this.criticalBabies = [];
         
         // Stop all sounds
         this.soundManager.stopAll();
