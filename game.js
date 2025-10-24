@@ -17,6 +17,7 @@ class HospitalGuardGame {
         this.criticalChance = 0.3; // 30% chance per second
         this.gorkemChance = 0.1; // 10% chance per 5 seconds
         this.gameDuration = 120; // 2 minutes in seconds
+        this.randomEventIntervals = []; // Track intervals for cleanup
         
         // Mobile detection and optimization
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -33,6 +34,31 @@ class HospitalGuardGame {
         this.setupEventListeners();
         this.createBabies();
         this.updateUI();
+        this.preventDoubleClickZoom();
+    }
+
+    preventDoubleClickZoom() {
+        // Prevent double-click zoom on all elements
+        document.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+        
+        // Prevent pinch-to-zoom on touch devices
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Prevent double-tap zoom on mobile
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
     }
 
     setupEventListeners() {
@@ -62,14 +88,12 @@ class HospitalGuardGame {
                 }
             });
             
-        // Touch events for mobile
-        babiesContainer.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (e.target.closest('.baby')) {
-                this.handleBabyClick(e.target.closest('.baby'));
-            }
-        }, { passive: false });
+            // Touch events for mobile
+            babiesContainer.addEventListener('touchend', (e) => {
+                if (e.target.closest('.baby')) {
+                    this.handleBabyClick(e.target.closest('.baby'));
+                }
+            });
         }
 
         // Tool button events (delegated)
@@ -80,22 +104,20 @@ class HospitalGuardGame {
         });
         
         // Touch events for tool buttons
-        document.addEventListener('touchstart', (e) => {
+        document.addEventListener('touchend', (e) => {
             if (e.target.classList.contains('tool-btn')) {
-                e.preventDefault();
-                e.stopPropagation();
                 this.handleToolClick(e.target);
             }
-        }, { passive: false });
+        });
 
-        // Rescue game click/touch
-        const rescueTimer = document.getElementById('rescue-timer');
-        if (rescueTimer) {
-            rescueTimer.addEventListener('click', () => {
+        // Rescue game click/touch - use target zone, not timer
+        const rescueTarget = document.getElementById('rescue-target');
+        if (rescueTarget) {
+            rescueTarget.addEventListener('click', () => {
                 this.handleRescueClick();
             });
             
-            rescueTimer.addEventListener('touchstart', (e) => {
+            rescueTarget.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 this.handleRescueClick();
@@ -175,23 +197,34 @@ class HospitalGuardGame {
     }
 
     startRandomEvents() {
+        // Clear any existing intervals
+        this.clearRandomEvents();
+        
         // Critical baby events
-        setInterval(() => {
+        const criticalInterval = setInterval(() => {
             if (this.gameState === 'MONITORING' && !this.currentCriticalBaby) {
                 if (Math.random() < this.criticalChance) {
                     this.makeRandomBabyCritical();
                 }
             }
         }, 1000);
+        this.randomEventIntervals.push(criticalInterval);
 
         // Görkem appearance
-        setInterval(() => {
+        const gorkemInterval = setInterval(() => {
             if (this.gameState === 'MONITORING' && !this.gorkemAppeared) {
                 if (Math.random() < this.gorkemChance) {
                     this.appearGorkem();
                 }
             }
         }, 5000);
+        this.randomEventIntervals.push(gorkemInterval);
+    }
+
+    clearRandomEvents() {
+        // Clear all random event intervals
+        this.randomEventIntervals.forEach(interval => clearInterval(interval));
+        this.randomEventIntervals = [];
     }
 
     makeRandomBabyCritical() {
@@ -202,12 +235,12 @@ class HospitalGuardGame {
         this.setBabyState(randomBaby.id, 'critical');
         this.currentCriticalBaby = randomBaby.id;
         
-        // Auto-fail after 5 seconds if not clicked
+        // Auto-fail after 8 seconds if not clicked (increased from 5 for better gameplay)
         setTimeout(() => {
             if (this.currentCriticalBaby === randomBaby.id && this.gameState === 'MONITORING') {
                 this.loseBaby(); // Bebek kaybedildi
             }
-        }, 5000);
+        }, 8000);
     }
 
     setBabyState(babyId, state) {
@@ -290,8 +323,9 @@ class HospitalGuardGame {
         const rescueHeader = document.querySelector('.rescue-header h3');
         const rescueInstructions = document.querySelector('.rescue-instructions p');
         
-        rescueHeader.textContent = '❤️ Kalp Masajı!';
-        rescueInstructions.textContent = 'Kalbe 10 saniyede 100 kez tıklayın!';
+        rescueHeader.textContent = '❤️ Kalp Masajı (CPR)!';
+        const target = this.isMobile ? 30 : 50;
+        rescueInstructions.textContent = `Kalbe hızlıca ${target} kez tıklayın!`;
         
         this.startCPRTimer();
     }
@@ -302,7 +336,7 @@ class HospitalGuardGame {
         const rescueInstructions = document.querySelector('.rescue-instructions p');
         
         rescueHeader.textContent = '💉 İğne Yapma!';
-        rescueInstructions.textContent = 'İğneyi bebek poposuna sürükleyip bırakın!';
+        rescueInstructions.textContent = 'İğneyi yeşil hedef bölgesine sürükleyin!';
         
         this.startInjectionTimer();
     }
@@ -322,23 +356,31 @@ class HospitalGuardGame {
     startCPRTimer() {
         const targetZone = document.getElementById('rescue-target');
         
-        // CPR requires 100 clicks in 10 seconds
+        // CPR requires clicks in time (made easier - was too hard at 100 clicks)
         this.cprClicks = 0;
-        this.cprTarget = 100; // Need 100 clicks in 10 seconds
+        this.cprTarget = this.isMobile ? 30 : 50; // Easier: 30 for mobile, 50 for desktop
         
         // Show full screen heart image
-        targetZone.innerHTML = '<div class="heart-image" style="width: 100%; height: 100%; background-image: url(\'images/kalp.png\'); background-size: contain; background-repeat: no-repeat; background-position: center; cursor: pointer; transition: transform 0.1s ease;"></div>';
+        targetZone.innerHTML = '<div class="heart-image"></div>';
         
         // Add click event listener to heart
         const heartImage = targetZone.querySelector('.heart-image');
         if (heartImage) {
             heartImage.addEventListener('click', () => this.handleRescueClick());
+            heartImage.addEventListener('touchend', () => this.handleRescueClick());
         }
         
         // Timer for 10 seconds
         let timeLeft = 10;
+        const progressBar = document.getElementById('rescue-progress');
+        
         const interval = setInterval(() => {
             timeLeft--;
+            
+            // Update progress bar to show time remaining
+            const progress = ((10 - timeLeft) / 10) * 100;
+            progressBar.style.width = progress + '%';
+            progressBar.style.background = 'linear-gradient(90deg, #f44336 0%, #ff9800 50%, #4CAF50 100%)';
             
             if (timeLeft <= 0) {
                 clearInterval(interval);
@@ -357,19 +399,19 @@ class HospitalGuardGame {
     startInjectionTimer() {
         const targetZone = document.getElementById('rescue-target');
         
-        // Injection requires 3 successful injections in 10 seconds
+        // Injection requires successful injections in time
         this.injectionClicks = 0;
-        this.injectionTarget = 3; // Need 3 successful injections
+        this.injectionTarget = this.isMobile ? 2 : 3; // Easier for mobile: 2 vs 3
         this.injectionSuccess = false;
         
         // Show baby butt and syringe for drag and drop
         targetZone.innerHTML = `
-            <div class="injection-game-container" style="width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: space-between; padding: 20px;">
+            <div class="injection-game-container" style="width: 100%; min-height: 300px; position: relative; display: flex; align-items: center; justify-content: space-around; padding: 30px; gap: 40px;">
                 <div class="baby-butt">
                     <div class="injection-zone"></div>
                 </div>
-                <div class="syringe-container" style="width: 100px; height: 100px; position: relative;">
-                    <div class="syringe-draggable" style="background-image: url('images/igne.png'); background-size: contain; background-repeat: no-repeat; background-position: center; width: 80px; height: 80px; border: 2px solid #2196F3; border-radius: 8px; background-color: rgba(33, 150, 243, 0.1); display: flex; align-items: center; justify-content: center; font-size: 40px;">💉</div>
+                <div class="syringe-container" style="width: 120px; height: 120px; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <div class="syringe-draggable"></div>
                 </div>
             </div>
         `;
@@ -377,10 +419,20 @@ class HospitalGuardGame {
         // Add drag and drop functionality
         this.setupInjectionDragDrop();
         
+        // Initialize injection zone position
+        this.moveInjectionZone();
+        
         // Timer for 10 seconds
         let timeLeft = 10;
+        const progressBar = document.getElementById('rescue-progress');
+        
         const interval = setInterval(() => {
             timeLeft--;
+            
+            // Update progress bar to show time remaining
+            const progress = ((10 - timeLeft) / 10) * 100;
+            progressBar.style.width = progress + '%';
+            progressBar.style.background = 'linear-gradient(90deg, #f44336 0%, #ff9800 50%, #4CAF50 100%)';
             
             if (timeLeft <= 0) {
                 clearInterval(interval);
@@ -470,12 +522,14 @@ class HospitalGuardGame {
                 // Successful injection
                 this.injectionClicks++;
                 const instructions = document.querySelector('.rescue-instructions p');
-                instructions.textContent = `İğne: ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
+                instructions.textContent = `✅ Harika! ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
                 
                 // Visual feedback
-                injectionZone.style.background = 'rgba(76, 175, 80, 0.6)';
+                injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
+                injectionZone.style.transform = 'translate(-50%, -50%) scale(1.3)';
                 setTimeout(() => {
-                    injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
+                    injectionZone.style.background = 'rgba(76, 175, 80, 0.4)';
+                    injectionZone.style.transform = 'translate(-50%, -50%) scale(1)';
                 }, 500);
                 
                 // Return syringe to start position
@@ -539,12 +593,14 @@ class HospitalGuardGame {
                 // Successful injection
                 this.injectionClicks++;
                 const instructions = document.querySelector('.rescue-instructions p');
-                instructions.textContent = `İğne: ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
+                instructions.textContent = `✅ Harika! ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
                 
                 // Visual feedback
-                injectionZone.style.background = 'rgba(76, 175, 80, 0.6)';
+                injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
+                injectionZone.style.transform = 'translate(-50%, -50%) scale(1.3)';
                 setTimeout(() => {
-                    injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
+                    injectionZone.style.background = 'rgba(76, 175, 80, 0.4)';
+                    injectionZone.style.transform = 'translate(-50%, -50%) scale(1)';
                 }, 500);
                 
                 // Return syringe to start position
@@ -782,6 +838,12 @@ class HospitalGuardGame {
             }
         ];
 
+        // Remove any existing quiz popup first
+        const existingPopup = document.querySelector('.quiz-popup');
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+        
         const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
         
         // Create quiz popup
@@ -790,29 +852,13 @@ class HospitalGuardGame {
         quizPopup.innerHTML = `
             <div class="quiz-content">
                 <h3>🧠 Tıbbi Bilgi Testi!</h3>
-                <p style="margin-bottom: 20px; font-size: 16px; line-height: 1.4;">${randomQuestion.question}</p>
+                <div class="quiz-question-text">${randomQuestion.question}</div>
                 <div class="quiz-options">
                     ${randomQuestion.options.map((option, index) => 
                         `<button class="quiz-option" data-answer="${index}">${option}</button>`
                     ).join('')}
                 </div>
             </div>
-        `;
-        
-        quizPopup.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 2000;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
         `;
         
         document.body.appendChild(quizPopup);
@@ -840,6 +886,13 @@ class HospitalGuardGame {
             this.setBabyState(this.currentCriticalBaby, 'saved');
             this.savedCount++;
             this.score += 100;
+            
+            // After some time, set baby back to normal
+            const savedBabyId = this.currentCriticalBaby;
+            setTimeout(() => {
+                this.setBabyState(savedBabyId, 'normal');
+            }, 3000);
+            
             this.currentCriticalBaby = null;
             
             // Show success feedback
@@ -847,6 +900,13 @@ class HospitalGuardGame {
         } else {
             // Baby dies - lose baby
             this.loseBaby();
+            
+            // Hide rescue game
+            document.getElementById('game-overlay').style.display = 'none';
+            document.getElementById('baby-rescue-game').style.display = 'none';
+            
+            this.gameState = 'MONITORING';
+            this.updateUI();
             return;
         }
         
@@ -996,6 +1056,12 @@ class HospitalGuardGame {
 
     loseBaby() {
         this.lostCount++;
+        
+        // Reset the baby back to normal state instead of removing
+        if (this.currentCriticalBaby !== null) {
+            this.setBabyState(this.currentCriticalBaby, 'normal');
+        }
+        
         this.currentCriticalBaby = null;
         
         // Show feedback
@@ -1007,12 +1073,16 @@ class HospitalGuardGame {
             return;
         }
         
+        // Penalty: reduce score
+        this.score = Math.max(0, this.score - 50);
+        
         this.updateUI();
     }
 
     endGame(victory) {
         this.gameState = 'GAME_OVER';
         clearInterval(this.gameTimer);
+        this.clearRandomEvents(); // Clean up random event intervals
         
         // Show game over screen
         document.getElementById('game-over-screen').style.display = 'flex';
@@ -1047,6 +1117,19 @@ class HospitalGuardGame {
         }
         if (this.rescueInterval) {
             clearInterval(this.rescueInterval);
+        }
+        this.clearRandomEvents(); // Clean up random event intervals
+        
+        // Remove any lingering popups
+        const existingQuizPopup = document.querySelector('.quiz-popup');
+        if (existingQuizPopup) {
+            existingQuizPopup.remove();
+        }
+        
+        // Remove Görkem from room if exists
+        const gorkemInRoom = document.querySelector('.gorkem-in-room');
+        if (gorkemInRoom) {
+            gorkemInRoom.remove();
         }
         
         // Hide all overlays

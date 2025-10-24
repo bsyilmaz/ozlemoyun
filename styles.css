@@ -21,6 +21,17 @@ body {
     touch-action: manipulation;
 }
 
+/* Prevent double-click zoom on all elements */
+* {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
 .game-container {
     width: 100vw;
     height: 100vh;
@@ -243,8 +254,8 @@ body {
     text-align: center;
     transition: all 0.3s ease;
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 10px;
+    right: 10px;
     z-index: 5;
 }
 
@@ -252,8 +263,8 @@ body {
     font-size: 60px;
     margin-bottom: 10px;
     animation: doctorBreathe 2s infinite;
-    width: 180px;
-    height: 180px;
+    width: 300px;
+    height: 300px;
     background-image: url('images/ozlem-intern-doktor-removebg-preview.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -345,19 +356,22 @@ body {
 
 /* Baby Rescue Mini-game */
 .baby-rescue-game {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    padding: 40px;
+    border-radius: 20px;
     text-align: center;
-    max-width: 400px;
+    max-width: 600px;
     width: 90%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border: 3px solid #4CAF50;
 }
 
 .rescue-header h3 {
     color: #f44336;
-    margin-bottom: 10px;
-    font-size: 24px;
+    margin-bottom: 15px;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
 }
 
 .rescue-timer {
@@ -376,10 +390,9 @@ body {
 
 .rescue-progress {
     height: 100%;
-    background: transparent;
+    background: linear-gradient(90deg, #f44336 0%, #ff9800 50%, #4CAF50 100%);
     width: 0%;
-    transition: width 0.1s linear;
-    /* animation: progressMove 2s linear infinite; */
+    transition: width 0.3s linear;
 }
 
 @keyframes progressMove {
@@ -401,7 +414,7 @@ body {
 
 .heart-image {
     width: 100%;
-    height: 100%;
+    height: 300px;
     background-image: url('images/kalp.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -409,6 +422,15 @@ body {
     cursor: pointer;
     pointer-events: auto;
     transition: transform 0.1s ease;
+    margin: 20px 0;
+}
+
+.heart-image:hover {
+    transform: scale(1.05);
+}
+
+.heart-image:active {
+    transform: scale(0.95);
 }
 
 .syringe-image {
@@ -424,8 +446,8 @@ body {
 }
 
 .syringe-draggable {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     background-image: url('images/igne.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -436,9 +458,10 @@ body {
     left: 0;
     transition: transform 0.1s ease;
     z-index: 10;
-    border: 2px solid #2196F3;
-    border-radius: 8px;
-    background-color: rgba(33, 150, 243, 0.1);
+    border: 3px solid #2196F3;
+    border-radius: 12px;
+    background-color: rgba(33, 150, 243, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .syringe-draggable:active {
@@ -446,15 +469,17 @@ body {
 }
 
 .baby-butt {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     background-image: url('images/bebekpoposu.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    border: 3px solid #4CAF50;
-    border-radius: 15px;
+    border: 4px solid #4CAF50;
+    border-radius: 20px;
     position: relative;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .injection-zone {
@@ -462,17 +487,35 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: rgba(76, 175, 80, 0.3);
-    border: 2px dashed #4CAF50;
+    width: 80px;
+    height: 80px;
+    background: rgba(76, 175, 80, 0.4);
+    border: 3px dashed #4CAF50;
     border-radius: 50%;
     pointer-events: none;
+    animation: pulseZone 1.5s infinite;
+}
+
+@keyframes pulseZone {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
 }
 
 .rescue-instructions {
-    margin-top: 15px;
-    color: #666;
+    margin-top: 20px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    background: rgba(76, 175, 80, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #4CAF50;
 }
 
 /* Quiz Popup Styles */
@@ -481,15 +524,16 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     z-index: 2000;
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+    border: 3px solid #2196F3;
 }
 
 @media (max-width: 768px) {
@@ -500,34 +544,65 @@ body {
         max-height: 90vh;
     }
     
+    .baby-rescue-game {
+        padding: 25px;
+        max-width: 95%;
+    }
+    
     .injection-game-container {
         flex-direction: column !important;
         align-items: center !important;
-        gap: 20px !important;
+        gap: 30px !important;
     }
     
     .baby-butt {
-        width: 150px !important;
-        height: 150px !important;
+        width: 200px !important;
+        height: 200px !important;
     }
     
     .syringe-container {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    
+    .syringe-draggable {
         width: 80px !important;
         height: 80px !important;
     }
     
-    .syringe-draggable {
-        width: 60px !important;
-        height: 60px !important;
+    .rescue-header h3 {
+        font-size: 22px;
     }
 }
 
 .quiz-content h3 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 16px;
-    text-align: left;
+    color: #2196F3;
+    margin-bottom: 25px;
+    font-size: 24px;
+    text-align: center;
     line-height: 1.4;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-content p {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.quiz-question-text {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(33, 150, 243, 0.1);
+    border-radius: 12px;
+    border: 2px solid #2196F3;
+    color: #333;
+    font-size: 17px;
+    line-height: 1.6;
+    text-align: left;
+    font-weight: 500;
 }
 
 .quiz-options {
@@ -537,42 +612,49 @@ body {
 }
 
 .quiz-option {
-    padding: 12px 20px;
-    border: 2px solid #4CAF50;
+    padding: 15px 20px;
+    border: 3px solid #2196F3;
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 14px;
+    font-size: 15px;
     text-align: left;
-    line-height: 1.3;
+    line-height: 1.4;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .quiz-option:hover {
-    background: #f3e5f5;
+    background: #e3f2fd;
     transform: scale(1.02);
+    border-color: #1976D2;
 }
 
 .quiz-option:active {
-    background: #4CAF50;
+    background: #2196F3;
     color: white;
+    transform: scale(0.98);
 }
 
 /* Boss Fight Mini-game */
 .boss-fight-game {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
+    background: linear-gradient(135deg, #ffffff 0%, #f3e5f5 100%);
+    padding: 40px;
+    border-radius: 20px;
     text-align: center;
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border: 3px solid #9C27B0;
 }
 
 .boss-header h3 {
     color: #9C27B0;
-    margin-bottom: 15px;
-    font-size: 24px;
+    margin-bottom: 20px;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
 }
 
 .boss-health {
@@ -612,8 +694,8 @@ body {
     font-size: 50px;
     margin-bottom: 10px;
     animation: gorkemIdle 2s infinite;
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     background-image: url('images/gorkem-normal.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -662,13 +744,14 @@ body {
 }
 
 .tool-btn {
-    padding: 10px;
-    border: 2px solid #9C27B0;
+    padding: 15px 10px;
+    border: 3px solid #9C27B0;
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: 600;
     /* Mobile touch optimization */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
     -webkit-touch-callout: none;
@@ -678,7 +761,8 @@ body {
     -ms-user-select: none;
     user-select: none;
     touch-action: manipulation;
-    min-height: 44px; /* Minimum touch target size */
+    min-height: 50px; /* Minimum touch target size */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .tool-btn:hover {
@@ -903,8 +987,6 @@ body {
         min-height: 100dvh;
     }
     
-    }
-    
     .baby-ward, .doctor-station {
         min-height: 50vh;
         flex: 1;
@@ -1064,8 +1146,6 @@ body {
 @media (max-width: 768px) and (orientation: landscape) {
     .game-area {
         flex-direction: row;
-    }
-    
     }
     
     .baby-ward, .doctor-station {

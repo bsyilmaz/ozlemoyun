@@ -1,115 +1,160 @@
 # 🏥 Hastane Bekçisi - Hospital Guard Game
 
-Web tabanlı bir hastane bekçisi oyunu. Yenidoğan bebekleri izleyin, kritik durumdaki bebekleri kurtarın ve Görkem ile savaşın!
+Yenidoğan bebekleri izleyin ve onları kurtarın! Bir hastane bekçisi olarak göreviniz bebeklerin durumunu takip etmek ve kritik durumlarda müdahale etmektir.
 
-## 🎮 Oyun Hakkında
+## 🎮 Oyun Özellikleri
 
-Bu oyunda bir doktor olarak yenidoğan bebekleri izliyorsunuz. Bebeklerden bazıları rastgele kritik duruma geçer ve onları kurtarmak için hızlı refleks oyunu oynamanız gerekir. Ayrıca ara sıra kapıdan Görkem adında kıdemli doktor gelir ve onunla savaşmanız gerekir.
+### Ana Oynanış
+- **Bebek İzleme**: 4 bebeği aynı anda izleyin
+- **Kritik Durumlar**: Bebekler rastgele kritik duruma girebilir
+- **Mini Oyunlar**: Bebekleri kurtarmak için 3 farklı mini oyun:
+  - ❤️ **Kalp Masajı (CPR)**: Kalbe yeterli sayıda tıklayın
+  - 💉 **İğne Yapma**: İğneyi bebeğin doğru yerine sürükleyin
+  - 🧠 **Tıbbi Bilgi Testi**: Yenidoğan bakımı hakkında soruları cevaplayın
 
-## 🎯 Oyun Mekanikleri
+### Boss Savaşı
+- **Görkem ile Mücadele**: Kapıdan giren Görkem'i tıbbi aletlerle yenin
+- 6 farklı tıbbi aletle saldırın
+- Görkem'i yenerek bonus puan kazanın
 
-### Ana Oyun
-- **İzleme Modu**: Bebekleri camın arkasından izleyin
-- **Kritik Durum**: Bebekler rastgele kritik duruma geçer
-- **Kurtarma**: Kritik bebeğe tıklayarak hızlı refleks oyunu başlatın
-- **Zaman Sınırı**: 2 dakika boyunca hayatta kalın
+## 🎯 Oyun Kuralları
 
-### Bebek Kurtarma Mini-Oyunu
-- Yeşil hedef alana geldiğinde tıklayın
-- Doğru zamanda tıklarsanız bebek kurtarılır
-- Yanlış zamanda tıklarsanız oyun biter
+- **Süre**: Masaüstünde 2 dakika, mobilde 90 saniye
+- **Bebek Kurtarma**: Her kurtarılan bebek +100 puan
+- **Bebek Kaybı**: Her kaybedilen bebek -50 puan
+- **Zaman Sınırı**: Kritik bebeklere 8 saniye içinde müdahale edin
+- **Oyun Sonu**: 100 bebek kaybedildiğinde veya süre dolduğunda oyun biter
 
-### Görkem Savaşı
-- Görkem rastgele kapıdan gelir
-- Tıbbi aletlerle ona saldırın
-- Canını sıfıra indirerek onu yenin
-- Her alet farklı hasar verir
+## 🎨 Özellikler
 
-## 🛠️ Teknik Özellikler
+### Mobil Uyumluluk
+- ✅ Dokunmatik ekran desteği
+- ✅ Mobil için optimize edilmiş zorluk
+- ✅ Responsive tasarım
+- ✅ Yatay ve dikey mod desteği
 
-- **Framework**: Pure HTML5, CSS3, JavaScript
-- **Responsive**: Mobil ve masaüstü uyumlu
-- **Animasyonlar**: CSS animasyonları ve geçişler
-- **Oyun Durumları**: 
-  - `START`: Başlangıç ekranı
-  - `MONITORING`: Ana izleme modu
-  - `BABY_MINIGAME`: Bebek kurtarma oyunu
-  - `BOSS_FIGHT`: Görkem savaşı
-  - `GAME_OVER`: Oyun bitti
+### Görsel Özellikler
+- 🏥 Hastane temalı arka plan
+- 🎨 Özel karakter grafikleri
+- ✨ Animasyonlar ve efektler
+- 📊 Gerçek zamanlı istatistikler
 
-## 🎨 Görsel Özellikler
+## 🛠️ Teknik Bilgiler
 
-### Renk Paleti
-- **Bebek Bölümü**: Yeşil tonları (sağlık)
-- **Doktor Bölümü**: Mor tonları (tıp)
-- **Cam Bölücü**: Mavi cam efekti
-- **Kritik Durum**: Kırmızı uyarı renkleri
-
-### Animasyonlar
-- Bebekler için nabız animasyonu
-- Doktor için nefes alma animasyonu
-- Kapı açılma animasyonu
-- Geri bildirim popup'ları
-
-## 🎮 Nasıl Oynanır
-
-1. **Oyunu Başlat**: "Oyunu Başlat" butonuna tıklayın
-2. **Bebekleri İzleyin**: Camın arkasından bebekleri izleyin
-3. **Kritik Bebekleri Kurtarın**: Kırmızı olan bebeğe tıklayın ve hızlı refleks oyunu oynayın
-4. **Görkem ile Savaşın**: Kapıdan geldiğinde tıbbi aletlerle saldırın
-5. **2 Dakika Hayatta Kalın**: Süreyi tamamlayarak kazanın
-
-## 🏆 Puanlama Sistemi
-
-- **Bebek Kurtarma**: +100 puan
-- **Görkem Yenme**: +500 puan
-- **Zaman Bonusu**: Her saniye +1 puan
-
-## 📱 Responsive Tasarım
-
-- **Masaüstü**: Yan yana bölümler
-- **Mobil**: Alt alta bölümler
-- **Dokunmatik**: Mobil cihazlarda dokunma desteği
-
-## 🔧 Geliştirme
+### Kullanılan Teknolojiler
+- HTML5
+- CSS3 (Animasyonlar ve Responsive Tasarım)
+- Vanilla JavaScript (ES6+)
+- PWA Desteği (Progressive Web App)
 
 ### Dosya Yapısı
 ```
-/
+ozlemoyun/
 ├── index.html          # Ana HTML dosyası
-├── styles.css          # CSS stilleri
 ├── game.js            # Oyun mantığı
+├── styles.css         # Stil dosyası
+├── manifest.json      # PWA manifest
+├── images/            # Oyun görselleri
+│   ├── baby-normal.png
+│   ├── baby-hurt.png
+│   ├── gorkem-normal.png
+│   ├── gorkem-hurt-removebg-preview.png
+│   ├── ozlem-intern-doktor-removebg-preview.png
+│   ├── hospital-room-bg.png
+│   ├── kalp.png
+│   ├── igne.png
+│   └── bebekpoposu.png
 └── README.md          # Bu dosya
 ```
 
-### Görsel Entegrasyonu
-Oyun, aşağıdaki görselleri kullanmak üzere hazırlanmıştır:
-- `/images/baby-normal.png` - Normal bebek
-- `/images/baby-critical.png` - Kritik bebek
-- `/images/doctor.png` - Doktor karakteri
-- `/images/gorkem.png` - Görkem karakteri
-- `/images/tools/` - Tıbbi aletler klasörü
-- `/images/background.png` - Arka plan
-- `/images/door.png` - Kapı
+## 🚀 Kurulum ve Çalıştırma
 
-## 🎯 Gelecek Özellikler
+### Yerel Olarak Çalıştırma
+1. Projeyi klonlayın veya indirin
+2. `index.html` dosyasını bir web tarayıcısında açın
+3. Oyunu oynayın!
 
-- Ses efektleri
-- Daha fazla bebek türü
-- Farklı zorluk seviyeleri
-- Liderlik tablosu
-- Daha fazla boss karakteri
+### Web Sunucusu ile Çalıştırma
+```bash
+# Python ile basit sunucu (Python 3)
+python -m http.server 8000
 
-## 🐛 Bilinen Sorunlar
+# Node.js ile basit sunucu (http-server paketi ile)
+npx http-server -p 8000
+```
 
-- Görsel dosyalar henüz entegre edilmedi (placeholder emojiler kullanılıyor)
-- Ses efektleri eklenmedi
-- Mobil cihazlarda performans optimizasyonu gerekebilir
+Tarayıcınızda `http://localhost:8000` adresine gidin.
+
+## 🎓 Eğitici İçerik
+
+Oyun, yenidoğan bakımı hakkında gerçek tıbbi bilgiler içerir:
+- APGAR skorlaması
+- Yenidoğan sarılığı
+- Fizyolojik değerler
+- Temel tıbbi prosedürler
+- Prematüre bebek bakımı
+
+## 🏆 İpuçları
+
+1. **Hızlı Reaksiyon**: Kritik bebeklere hızlıca müdahale edin
+2. **Bilgi Gücü**: Quiz sorularını öğrenmek sonraki oyunlarda yardımcı olur
+3. **Mobil Avantajı**: Mobilde oyun biraz daha kolay
+4. **Görkem'e Dikkat**: Görkem'i yenmek büyük bonus verir
+5. **Puan Yönetimi**: Kayıp bebekler puanınızı düşürür
+
+## 🔧 Son Düzeltmeler ve İyileştirmeler
+
+### Düzeltilen Hatalar
+- ✅ CSS syntax hataları düzeltildi
+- ✅ Bellek sızıntılarına neden olan interval'lar temizleniyor
+- ✅ Mobil dokunmatik olay optimizasyonları
+- ✅ Mini oyun zorluk seviyeleri dengelendi
+- ✅ Bebek zaman aşımı süreleri iyileştirildi
+- ✅ Quiz popup'larının çoğaltılması önlendi
+
+### Yapılan İyileştirmeler
+- ⚡ CPR zorluk seviyesi: 100'den 50'ye (masaüstü) ve 30'a (mobil) düşürüldü
+- ⏱️ Kritik bebek müdahale süresi: 5 saniyeden 8 saniyeye çıkarıldı
+- 💉 İğne oyunu: Mobilde 2, masaüstünde 3 başarılı enjeksiyon
+- 🔄 Kaybedilen bebekler oyunda kalıyor (normal duruma dönüyor)
+- 📊 İlerleme çubukları tüm mini oyunlarda gösteriliyor
+- 🧹 Oyun yeniden başlatılırken tüm kaynaklar temizleniyor
+
+## 📝 Geliştirici Notları
+
+### Oyun Sınıfı Yapısı
+```javascript
+HospitalGuardGame
+├── Constructor (Oyun ayarları)
+├── init() (Başlatma)
+├── setupEventListeners() (Olay dinleyicileri)
+├── createBabies() (Bebek oluşturma)
+├── startGame() (Oyunu başlat)
+├── startRandomEvents() (Rastgele olaylar)
+├── Mini Oyunlar
+│   ├── startCPRGame()
+│   ├── startInjectionGame()
+│   └── startQuizGame()
+├── Boss Savaşı
+│   ├── appearGorkem()
+│   ├── startBossFight()
+│   └── endBossFight()
+└── Yardımcı Fonksiyonlar
+    ├── updateUI()
+    ├── showFeedback()
+    └── clearRandomEvents()
+```
 
 ## 📄 Lisans
 
-Bu proje eğitim amaçlı geliştirilmiştir.
+Bu proje eğitim amaçlıdır.
+
+## 🤝 Katkıda Bulunma
+
+Oyunu geliştirmek için önerilerinizi paylaşabilirsiniz!
 
 ---
 
-**Geliştirici Notu**: Bu oyun, hastane ortamında çalışan sağlık personelinin stresli durumlarını eğlenceli bir şekilde simüle etmek için tasarlanmıştır. Gerçek tıbbi durumlarla ilgisi yoktur.
+**Oyunu geliştiren**: Bayram Selim Yılmaz
+**Versiyon**: 1.1.0
+**Son Güncelleme**: Ekim 2025
