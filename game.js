@@ -248,7 +248,7 @@ class HospitalGuardGame {
         // Şifre kontrolü
         const passwordInput = document.getElementById('game-password');
         const passwordError = document.getElementById('password-error');
-        const correctPassword = 'ozlem2025'; // Şifreyi buradan değiştirebilirsin
+        const correctPassword = '1234'; // Şifreyi buradan değiştirebilirsin
         
         if (passwordInput.value !== correctPassword) {
             passwordError.textContent = '❌ Yanlış şifre! Oyuna erişim yok.';
