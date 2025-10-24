@@ -159,15 +159,7 @@ class HospitalGuardGame {
             }
         }, 1000);
         
-        // Check for Görkem every 5 seconds
-        this.gorkemCheckInterval = setInterval(() => {
-            if (this.gameState === 'MONITORING' && !this.gorkemAppeared && 
-                !this.currentCriticalBaby && this.gorkemAppearCount < 4) {
-                if (Math.random() < this.gorkemChance) {
-                    this.appearGorkem();
-                }
-            }
-        }, 5000);
+        // Görkem artık bebek kaybında geliyor (random yerine)
     }
     
     makeRandomBabyCritical() {
@@ -726,16 +718,22 @@ class HospitalGuardGame {
         
         this.score = Math.max(0, this.score - 50);
         this.updateUI();
+        
+        // Görkem her bebek kaybında geliyor!
+        if (!this.gorkemAppeared && this.gameState === 'MONITORING') {
+            setTimeout(() => {
+                if (!this.gorkemAppeared && this.gameState === 'MONITORING') {
+                    this.appearGorkem();
+                }
+            }, 2000); // 2 saniye sonra Görkem gelir
+        }
     }
     
     appearGorkem() {
         this.gorkemAppeared = true;
         this.gorkemAppearCount++;
         
-        const door = document.getElementById('door');
-        door.classList.add('open');
-        
-        this.showFeedback('Görkem kapıdan giriyor!', 'error');
+        this.showFeedback('⚠️ Görkem geldi! Hazır ol!', 'error');
         
         setTimeout(() => {
             this.startBossFight();
@@ -821,9 +819,6 @@ class HospitalGuardGame {
     endBossFight() {
         this.score += 500;
         this.gorkemAppeared = false;
-        
-        const door = document.getElementById('door');
-        door.classList.remove('open');
         
         document.getElementById('game-overlay').style.display = 'none';
         document.getElementById('boss-fight-game').style.display = 'none';

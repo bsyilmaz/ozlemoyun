@@ -197,8 +197,8 @@ body {
     text-align: center;
     transition: all 0.3s ease;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 50px;
+    right: 20px;
     z-index: 5;
 }
 
@@ -236,35 +236,7 @@ body {
     50% { transform: scale(1.1); }
 }
 
-/* ========== DOOR ========== */
-.door {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 60px;
-    height: 80px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: rgba(139, 69, 19, 0.1);
-    border-radius: 5px;
-    border: 2px solid #8B4513;
-}
-
-.door-frame {
-    font-size: 40px;
-    text-align: center;
-    line-height: 80px;
-    color: #8B4513;
-}
-
-.door.open {
-    animation: doorOpen 0.5s ease-out;
-}
-
-@keyframes doorOpen {
-    0% { transform: rotateY(0deg); }
-    100% { transform: rotateY(-90deg); }
-}
+/* Door removed - Görkem now appears on baby loss */
 
 /* ========== GAME OVERLAY ========== */
 .game-overlay {
@@ -623,19 +595,18 @@ body {
         font-size: 10px;
     }
     
+    .doctor-character {
+        bottom: 80px;
+        right: 10px;
+    }
+    
     .doctor-sprite {
-        width: 120px;
-        height: 120px;
+        width: 150px;
+        height: 150px;
     }
     
-    .door {
-        width: 50px;
-        height: 60px;
-    }
-    
-    .door-frame {
-        font-size: 30px;
-        line-height: 60px;
+    .doctor-status {
+        font-size: 13px;
     }
     
     .baby-rescue-game, .boss-fight-game {
@@ -659,8 +630,13 @@ body {
         height: 50px;
     }
     
+    .doctor-character {
+        bottom: 60px;
+        right: 5px;
+    }
+    
     .doctor-sprite {
-        width: 100px;
-        height: 100px;
+        width: 130px;
+        height: 130px;
     }
 }
