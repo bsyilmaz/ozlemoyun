@@ -380,6 +380,8 @@ class HospitalGuardGame {
         }
         this.lastMiniGameType = this.currentMiniGameType;
         
+        console.log('Selected mini game:', this.currentMiniGameType, 'Count:', this.sameGameCount);
+        
         // Show overlay
         document.getElementById('game-overlay').style.display = 'flex';
         document.getElementById('baby-rescue-game').style.display = 'block';
@@ -392,10 +394,13 @@ class HospitalGuardGame {
     loadMiniGame() {
         const rescueContent = document.getElementById('rescue-content');
         
+        console.log('Loading mini game:', this.currentMiniGameType);
+        
         if (this.currentMiniGameType === 'cpr') {
             this.soundManager.play('heartBeat'); // Kalp atışı loop
             this.loadCPRGame(rescueContent);
         } else if (this.currentMiniGameType === 'injection') {
+            console.log('Loading injection game...');
             this.loadInjectionGame(rescueContent);
         } else if (this.currentMiniGameType === 'quiz') {
             this.loadQuizGame(rescueContent);
