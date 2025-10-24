@@ -336,9 +336,10 @@ class HospitalGuardGame {
         const rescueInstructions = document.querySelector('.rescue-instructions p');
         
         rescueHeader.textContent = '💉 İğne Yapma!';
-        rescueInstructions.textContent = 'İğneyi yeşil hedef bölgesine sürükleyin!';
+        const target = this.isMobile ? 2 : 3;
+        rescueInstructions.textContent = `İğneyi bebek poposuna tıklayın! (${target} kez)`;
         
-        this.startInjectionTimer();
+        this.startInjectionClickGame();
     }
 
     // Quiz Mini-game
@@ -360,27 +361,39 @@ class HospitalGuardGame {
         this.cprClicks = 0;
         this.cprTarget = this.isMobile ? 30 : 50; // Easier: 30 for mobile, 50 for desktop
         
-        // Show full screen heart image
-        targetZone.innerHTML = '<div class="heart-image"></div>';
+        // Show full screen heart image with counter
+        targetZone.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <div class="heart-image" style="position: relative;">
+                    <div class="cpr-counter" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 64px; font-weight: bold; color: #f44336; text-shadow: 3px 3px 6px rgba(0,0,0,0.5); z-index: 10;">
+                        ${this.cprClicks}/${this.cprTarget}
+                    </div>
+                </div>
+            </div>
+        `;
         
         // Add click event listener to heart
         const heartImage = targetZone.querySelector('.heart-image');
+        const counter = targetZone.querySelector('.cpr-counter');
+        
         if (heartImage) {
-            heartImage.addEventListener('click', () => this.handleRescueClick());
-            heartImage.addEventListener('touchend', () => this.handleRescueClick());
+            const handleHeartClick = () => {
+                this.handleRescueClick();
+                counter.textContent = `${this.cprClicks}/${this.cprTarget}`;
+            };
+            
+            heartImage.addEventListener('click', handleHeartClick);
+            heartImage.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleHeartClick();
+            });
         }
         
-        // Timer for 10 seconds
-        let timeLeft = 10;
-        const progressBar = document.getElementById('rescue-progress');
+        // Timer for 15 seconds (more time)
+        let timeLeft = 15;
         
         const interval = setInterval(() => {
             timeLeft--;
-            
-            // Update progress bar to show time remaining
-            const progress = ((10 - timeLeft) / 10) * 100;
-            progressBar.style.width = progress + '%';
-            progressBar.style.background = 'linear-gradient(90deg, #f44336 0%, #ff9800 50%, #4CAF50 100%)';
             
             if (timeLeft <= 0) {
                 clearInterval(interval);
@@ -391,12 +404,78 @@ class HospitalGuardGame {
                     this.endBabyRescueGame(false);
                 }
             }
-        }, 1000); // 1 second intervals
+        }, 1000);
         
         this.rescueInterval = interval;
     }
 
-    startInjectionTimer() {
+    startInjectionClickGame() {
+        const targetZone = document.getElementById('rescue-target');
+        
+        // Injection requires clicks
+        this.injectionClicks = 0;
+        this.injectionTarget = this.isMobile ? 2 : 3;
+        
+        // Show simple click interface
+        targetZone.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 40px;">
+                <div class="baby-butt-clickable" style="width: 280px; height: 280px; background-image: url('images/bebekpoposu.png'); background-size: contain; background-repeat: no-repeat; background-position: center; border: 4px solid #4CAF50; border-radius: 20px; cursor: pointer; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s;">
+                    <div class="injection-counter" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; font-weight: bold; color: #4CAF50; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                        ${this.injectionClicks}/${this.injectionTarget}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const babyButt = targetZone.querySelector('.baby-butt-clickable');
+        const counter = targetZone.querySelector('.injection-counter');
+        
+        // Click handler
+        const handleClick = () => {
+            this.injectionClicks++;
+            counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
+            
+            // Visual feedback
+            babyButt.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                babyButt.style.transform = 'scale(1)';
+            }, 100);
+            
+            const instructions = document.querySelector('.rescue-instructions p');
+            instructions.textContent = `✅ Harika! ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
+            
+            if (this.injectionClicks >= this.injectionTarget) {
+                clearInterval(this.rescueInterval);
+                this.endBabyRescueGame(true);
+            }
+        };
+        
+        babyButt.addEventListener('click', handleClick);
+        babyButt.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleClick();
+        });
+        
+        // Timer for 15 seconds (more time for clicking)
+        let timeLeft = 15;
+        
+        const interval = setInterval(() => {
+            timeLeft--;
+            
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                if (this.injectionClicks >= this.injectionTarget) {
+                    this.endBabyRescueGame(true);
+                } else {
+                    this.endBabyRescueGame(false);
+                }
+            }
+        }, 1000);
+        
+        this.rescueInterval = interval;
+    }
+
+    startInjectionTimerOLD() {
         const targetZone = document.getElementById('rescue-target');
         
         // Injection requires successful injections in time
@@ -624,28 +703,21 @@ class HospitalGuardGame {
     }
 
     startQuizTimer() {
-        const progressBar = document.getElementById('rescue-progress');
-        const targetZone = document.getElementById('rescue-target');
+        // Quiz'de direkt soruyu göster, timer'ı basit tut
+        // 30 saniye sınırı
+        let timeLeft = 30;
         
-        // Reset progress
-        progressBar.style.width = '0%';
-        
-        // Quiz has more time
-        let progress = 0;
         const interval = setInterval(() => {
-            progress += 0.8;
-            progressBar.style.width = progress + '%';
+            timeLeft--;
             
-            if (progress >= 100) {
+            if (timeLeft <= 0) {
                 clearInterval(interval);
                 // Auto-fail if not answered
-                setTimeout(() => {
-                    if (this.gameState === 'BABY_MINIGAME') {
-                        this.endBabyRescueGame(false);
-                    }
-                }, 1000);
+                if (this.gameState === 'BABY_MINIGAME') {
+                    this.endBabyRescueGame(false);
+                }
             }
-        }, 60);
+        }, 1000);
         
         this.rescueInterval = interval;
     }

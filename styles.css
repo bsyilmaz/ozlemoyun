@@ -377,22 +377,15 @@ body {
 .rescue-timer {
     margin: 20px 0;
     position: relative;
+    display: none; /* Progress bar gizlendi */
 }
 
 .rescue-bar {
-    width: 100%;
-    height: 20px;
-    background: #e0e0e0;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
+    display: none; /* Progress bar gizlendi */
 }
 
 .rescue-progress {
-    height: 100%;
-    background: linear-gradient(90deg, #f44336 0%, #ff9800 50%, #4CAF50 100%);
-    width: 0%;
-    transition: width 0.3s linear;
+    display: none; /* Progress bar gizlendi */
 }
 
 @keyframes progressMove {
@@ -401,20 +394,12 @@ body {
 }
 
 .rescue-target {
-    position: absolute;
-    top: 0;
-    left: 30%;
-    width: 40%;
-    height: 100%;
-    background: rgba(76, 175, 80, 0.3);
-    border: 2px solid #4CAF50;
-    border-radius: 10px;
-    pointer-events: none;
+    display: none; /* Target zone gizlendi */
 }
 
 .heart-image {
     width: 100%;
-    height: 300px;
+    height: 350px;
     background-image: url('images/kalp.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -423,6 +408,7 @@ body {
     pointer-events: auto;
     transition: transform 0.1s ease;
     margin: 20px 0;
+    position: relative;
 }
 
 .heart-image:hover {
@@ -431,6 +417,19 @@ body {
 
 .heart-image:active {
     transform: scale(0.95);
+}
+
+.baby-butt-clickable {
+    transition: all 0.2s ease;
+}
+
+.baby-butt-clickable:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.baby-butt-clickable:active {
+    transform: scale(0.95) !important;
 }
 
 .syringe-image {
