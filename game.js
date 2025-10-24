@@ -12,7 +12,6 @@ class HospitalGuardGame {
         this.gameTime = 0;
         this.bossHealth = 100;
         this.gorkemAppeared = false;
-        this.gorkemAppearCount = 0;
         this.currentCriticalBaby = null;
         this.currentMiniGameType = null;
         
@@ -915,7 +914,6 @@ class HospitalGuardGame {
     
     appearGorkem() {
         this.gorkemAppeared = true;
-        this.gorkemAppearCount++;
         
         this.showFeedback('⚠️ Görkem geldi! Hazır ol!', 'error');
         
@@ -1088,7 +1086,6 @@ class HospitalGuardGame {
         this.gameTime = 0;
         this.bossHealth = 100;
         this.gorkemAppeared = false;
-        this.gorkemAppearCount = 0;
         this.currentCriticalBaby = null;
         this.currentMiniGameType = null;
         
