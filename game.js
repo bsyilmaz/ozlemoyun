@@ -544,31 +544,66 @@ class HospitalGuardGame {
     
     loadQuizGame(container) {
         const questions = [
-            {
-                q: "Yenidoğanın normal kalp atış hızı aralığı nedir?",
-                options: ["80-100 atım/dk", "120-160 atım/dk", "180-200 atım/dk"],
-                correct: 1
-            },
-            {
-                q: "APGAR skoru ne zaman bakılır?",
-                options: ["Doğumdan önce", "1. ve 5. dakikada", "1 saat sonra"],
-                correct: 1
-            },
-            {
-                q: "Bebeğin ilk kakasına ne denir?",
-                options: ["Kolostrum", "Mekonyum", "Sürfaktan"],
-                correct: 1
-            },
-            {
-                q: "Prematüre bebek kaçıncı haftadan önce doğar?",
-                options: ["40. haftadan", "37. haftadan", "32. haftadan"],
-                correct: 1
-            },
-            {
-                q: "K vitamini neden verilir?",
-                options: ["Sarılık için", "Kanama önlemi için", "Bağışıklık için"],
-                correct: 1
-            }
+            { q: "Yenidoğanın normal kalp atış hızı aralığı nedir?", options: ["80-100 atım/dakika", "180-200 atım/dakika", "120-160 atım/dakika"], correct: 2 },
+            { q: "Yenidoğanın normal solunum sayısı aralığı nedir?", options: ["12-20 nefes/dakika", "30-60 nefes/dakika", "70-90 nefes/dakika"], correct: 1 },
+            { q: "APGAR skoru ne zaman bakılır?", options: ["1. ve 5. dakikalarda", "1. ve 5. saatlerde", "1. ve 5. günlerde"], correct: 0 },
+            { q: "APGAR'daki 'A' (Appearance) neyi ifade eder?", options: ["Aktivite (Kas tonusu)", "Ağlama (Refleks)", "Renk (Cilt rengi)"], correct: 2 },
+            { q: "APGAR'daki 'G' (Grimace) neyi ifade eder?", options: ["Gestasyon (Gebelik haftası)", "Refleks uyarılabilirlik", "Glukoz (Kan şekeri)"], correct: 1 },
+            { q: "Yenidoğan canlandırmasında (NRP) ilk adım nedir?", options: ["Göğüs basısı", "Pozitif basınçlı ventilasyon (PBV)", "Isıtma, kurulama, pozisyon verme ve stimülasyon"], correct: 2 },
+            { q: "NRP'de kalp hızı < 100 ve bebek apneikse ilk ne yapılır?", options: ["Adrenalin verilir", "Pozitif basınçlı ventilasyon (PBV) başlanır", "Göğüs kompresyonu başlanır"], correct: 1 },
+            { q: "NRP'de etkili PBV'ye rağmen kalp hızı < 60 ise ne yapılır?", options: ["Sadece O2 verilir", "Göğüs kompresyonu başlanır (ve PBV devam eder)", "Sadece ısıtılır"], correct: 1 },
+            { q: "Doğumda her bebeğe neden K vitamini yapılır?", options: ["Sarılığı daha hızlı atlatması için", "Yenidoğanın hemorajik (kanamalı) hastalığını önlemek için", "Bağışıklık sistemini güçlendirmek için"], correct: 1 },
+            { q: "Doğumda göze uygulanan antibiyotikli merhemin amacı nedir?", options: ["Bebeğin göz renginin netleşmesi için", "Görme yeteneğini keskinleştirmek için", "Doğum kanalından bulaşabilecek enfeksiyonlara bağlı göz iltihabını önlemek"], correct: 2 },
+            { q: "Bebeğin ilk kakasına ne ad verilir ve rengi nedir?", options: ["Kolostrum. Beyaz ve köpüklüdür.", "Sürfaktan. Sarı ve suludur.", "Mekonyum. Koyu yeşil-siyah ve yapışkandır."], correct: 2 },
+            { q: "Yenidoğanda fizyolojik sarılık genellikle kaçıncı gün başlar?", options: ["Doğar doğmaz ilk 1 saat içinde", "Doğumdan 24 saat sonra (Genellikle 2. veya 3. gün)", "Genellikle 10. günden sonra"], correct: 1 },
+            { q: "İlk 24 saat içinde başlayan sarılığa ne denir?", options: ["Anne sütü sarılığı", "Fizyolojik sarılık", "Patolojik sarılık"], correct: 2 },
+            { q: "Yenidoğan sarılığının temel tedavisi nedir?", options: ["Fototerapi (ışık tedavisi)", "Antibiyotik tedavisi", "Şekerli su verilmesi"], correct: 0 },
+            { q: "Yetersiz anne sütü alımına bağlı ilk hafta gelişen sarılığa ne denir?", options: ["Anne sütü sarılığı", "Emzirme sarılığı (Yetersiz beslenme sarılığı)", "Biliyer atrezi"], correct: 1 },
+            { q: "Anne sütündeki bir madde nedeniyle uzayan (2-3. haftada başlayan) sarılığa ne denir?", options: ["Anne sütü sarılığı", "Emzirme sarılığı", "Patolojik sarılık"], correct: 0 },
+            { q: "Diyabetik annelerin bebeklerinde en sık görülen metabolik sorun nedir?", options: ["Hiperglisemi (yüksek kan şekeri)", "Hipoglisemi (düşük kan şekeri)", "Hiperkalsemi (yüksek kalsiyum)"], correct: 1 },
+            { q: "Yenidoğanda hipoglisemi sınırı genellikle kaç mg/dL kabul edilir?", options: ["< 40-45 mg/dL", "< 70 mg/dL", "< 100 mg/dL"], correct: 0 },
+            { q: "Yenidoğanlar ilk birkaç günde doğum ağırlıklarının yaklaşık yüzde kaçını kaybedebilir?", options: ["%25'ine kadar", "%10'una kadar", "%1'ine kadar"], correct: 1 },
+            { q: "Bebeğin kaybettiği doğum kilosunu ne zaman geri alması beklenir?", options: ["İlk 48 saat içinde", "Yaklaşık 1 aylıkken", "Genellikle 10-14. günde"], correct: 2 },
+            { q: "Yenidoğanda ani ses veya düşme hissine karşı kollarını iki yana açıp geri topladığı refleks nedir?", options: ["Moro refleksi", "Emme refleksi", "Babinski refleksi"], correct: 0 },
+            { q: "Bebeğin yanağına dokunulduğunda başını o yöne çevirip ağzını açması hangi reflekstir?", options: ["Yakalama (Grasping) refleksi", "Arama (Rooting) refleksi", "Tonik boyun refleksi"], correct: 1 },
+            { q: "Ayak tabanı topuktan parmağa doğru çizildiğinde baş parmağın yukarı kalkması hangi reflekstir?", options: ["Babinski refleksi", "Palmar yakalama", "Adımlama refleksi"], correct: 0 },
+            { q: "Bebeğin sırtüstü yatarken başını bir yöne çevirdiğinde o taraftaki kol ve bacağın düzleşmesi?", options: ["Asimetrik tonik boyun refleksi", "Simetrik tonik boyun refleksi", "Moro refleksi"], correct: 0 },
+            { q: "Doğumda sütür hatlarını geçen, kafa derisindeki ödeme ne denir?", options: ["Sefal hematom", "Kaput suksedaneum", "Subgaleal kanama"], correct: 1 },
+            { q: "Doğumda sütür hatlarını geçmeyen, kemik zarı altı kanamaya ne denir?", options: ["Kaput suksedaneum", "Sefal hematom", "Epidural hematom"], correct: 1 },
+            { q: "Yenidoğanda burun ve yanaklarda görülen küçük, beyaz, keratin dolu kistlere ne denir?", options: ["Akne neonatorum", "Milia", "Seboreik dermatit"], correct: 1 },
+            { q: "Yenidoğanda sık görülen, pire ısırığı gibi ortası beyaz/sarı, etrafı kırmızı döküntü?", options: ["Eritema toksikum neonatorum", "Milia", "Püstüler melanozis"], correct: 0 },
+            { q: "Genellikle sakral bölgede (kuyruk sokumu) görülen mavi-gri renkli leke?", options: ["Mongol lekesi", "Hemanjiom", "Nevüs"], correct: 0 },
+            { q: "Avuç içinde tek çizgi (Simian line) hangi sendromun tipik bulgularındandır?", options: ["Turner Sendromu", "Down Sendromu (Trizomi 21)", "Marfan Sendromu"], correct: 1 },
+            { q: "Topuk kanı (Guthrie testi) ideal olarak ne zaman alınır?", options: ["Doğumdan hemen sonra", "Genellikle 3-5. günler arasında (en az 48 saat beslendikten sonra)", "Bebek 1 aylık olduğunda"], correct: 1 },
+            { q: "Topuk kanında taranan en bilinen iki metabolik/hormonal hastalık nedir?", options: ["Diyabet ve Astım", "Fenilketonüri (PKU) ve Konjenital Hipotiroidi", "Suçiçeği ve Kabakulak"], correct: 1 },
+            { q: "Kritik konjenital kalp hastalığı (KKH) taraması nasıl yapılır?", options: ["EKG çekilerek", "Akciğer filmi ile", "Sağ el ve ayaktan pulse oksimetre ile saturasyon ölçümü"], correct: 2 },
+            { q: "Gelişimsel kalça displazisi (GKD) taramasında kullanılan fizik muayene manevraları nelerdir?", options: ["Moro ve Arama", "Ortolani ve Barlow", "Babinski ve Yakalama"], correct: 1 },
+            { q: "Doğumda (hastanede) yapılan aşı hangisidir?", options: ["KKK (Kızamık, Kızamıkçık, Kabakulak)", "Hepatit B (1. Doz)", "Verem (BCG)"], correct: 1 },
+            { q: "Bebeğe 1. ayın sonunda yapılması gereken aşı hangisidir?", options: ["Hepatit B (2. Doz)", "KKK (1. Doz)", "DaBT (Difteri-Boğmaca-Tetanoz)"], correct: 0 },
+            { q: "Türkiye'de BCG (Verem) aşısı genellikle ne zaman yapılır?", options: ["1 yaşında", "Sadece riskli bebeklere", "2. ayın sonunda"], correct: 2 },
+            { q: "Bir bebeğin başını desteksiz dik tutabilmesi (baş kontrolü) genellikle kaçıncı ayda tamamlanır?", options: ["1. ay", "3-4. ay", "6. ay"], correct: 1 },
+            { q: "Doğumdan sonraki ilk birkaç gün gelen, antikor açısından zengin, sarımsı süte ne denir?", options: ["Geçiş sütü", "Olgun süt", "Kolostrum"], correct: 2 },
+            { q: "Göbek kordonu genellikle ne zaman düşer?", options: ["2-3 gün içinde", "1-3 hafta içinde", "2 ay sonra"], correct: 1 },
+            { q: "Prematüre bebeklerde solunum sıkıntısına (RDS) yol açan, akciğerde eksik olan madde nedir?", options: ["Bilirubin", "Hemoglobin", "Sürfaktan"], correct: 2 },
+            { q: "Yenidoğanın geçici takipnesi (TTN) nedir?", options: ["Akciğer enfeksiyonuna bağlı ateşli hastalık", "Akciğerlerde kalan fetal sıvının yavaş emilmesine bağlı hızlı solunum", "Kalp kapakçığında oluşan geçici bir üfürüm"], correct: 1 },
+            { q: "Kaçıncı gebelik haftasından önce doğan bebeklere prematüre denir?", options: ["37. haftadan önce", "40. haftadan önce", "32. haftadan önce"], correct: 0 },
+            { q: "42. gebelik haftasından sonra doğan bebeğe ne denir?", options: ["Post-term (Sürmatür)", "Miadında (Term)", "İntrauterin"], correct: 0 },
+            { q: "Erken başlangıçlı yenidoğan sepsisinde (ilk 72 saat) en sık etken olan iki bakteri nedir?", options: ["S. pneumoniae, H. influenzae", "Stafilokok, Listeria", "Grup B Streptokok (GBS) ve E. coli"], correct: 2 },
+            { q: "Gri bebek sendromu hangi antibiyotiğin yenidoğanda yüksek doz kullanımına bağlıdır?", options: ["Ampisilin", "Gentamisin", "Kloramfenikol"], correct: 2 },
+            { q: "Fototerapi alan bebekte görülebilen, bronz renkli cilt yan etkisi nedir?", options: ["Bronz bebek sendromu", "Mavi bebek sendromu", "Gri bebek sendromu"], correct: 0 },
+            { q: "Anne Rh(-), bebek Rh(+) ise kan uyuşmazlığını önlemek için kime, ne yapılır?", options: ["Bebeğe Anti-D immünglobulin", "Anneye Anti-D immünglobulin (RhoGAM)", "Anneye K vitamini"], correct: 1 },
+            { q: "Göbek kordonunun geç düşmesi (örn. >3 hafta) hangi nadir hastalığı düşündürebilir?", options: ["Lökosit adezyon defekti (LAD)", "Fenilketonüri", "Kistik fibrozis"], correct: 0 },
+            { q: "Ter testinin tanı koydurduğu, akciğer ve pankreası etkileyen genetik hastalık?", options: ["Kistik fibrozis", "Çölyak hastalığı", "Hipotiroidi"], correct: 0 },
+            { q: "6 ay - 2 yaş arası çocuklarda kaba, havlar tarzda öksürük ve inspiratuar stridor ile seyreden viral enfeksiyon nedir?", options: ["Bronşiolit", "Krup (Laringotrakeobronşit)", "Pnömoni (Zatürre)"], correct: 1 },
+            { q: "Özellikle 2 yaş altı çocuklarda hışıltı ve solunum sıkıntısı yapan, en sık etkeni RSV olan akciğer enfeksiyonu?", options: ["Bronşiolit", "Astım", "Epiglottit"], correct: 0 },
+            { q: "Çocuklarda orta kulak iltihabının (Akut Otitis Media) en sık bakteriyel etkeni nedir?", options: ["Streptococcus pyogenes", "Streptococcus pneumoniae (Pneumokok)", "Staphylococcus aureus"], correct: 1 },
+            { q: "Yüksek ateşin ardından ateş düşünce vücutta başlayan makülopapüler döküntü (6. hastalık)?", options: ["Kızamıkçık", "Roseola infantum (HHV-6)", "El-Ayak-Ağız hastalığı"], correct: 1 },
+            { q: "Yanaklarda tokat atılmış görünüm yaratan döküntünün (5. hastalık) etkeni nedir?", options: ["Parvovirus B19", "Rubella virusu", "Coxsackievirus"], correct: 0 },
+            { q: "Yenidoğanda ağızda salya akıntısı ve beslenirken morarma varsa ilk akla ne gelmelidir?", options: ["Trizomi 21", "Özofagus atrezisi (Yemek borusunun tıkalı olması)", "Yarık damak"], correct: 1 },
+            { q: "Göbek kordonunda normalde kaç arter ve kaç ven bulunur?", options: ["1 arter, 1 ven", "2 arter, 1 ven", "2 arter, 2 ven"], correct: 1 },
+            { q: "Yenidoğanda dehidratasyonun en güvenilir klinik bulgusu nedir?", options: ["Bıngıldağın çökük olması", "Kilo kaybı (Tartı kaybı)", "Ağlarken gözyaşı olmaması"], correct: 1 },
+            { q: "Solunum sıkıntısı olan, özellikle alt ekstremitelerde nabızların zayıf alındığı bir yenidoğanda ne düşünülmelidir?", options: ["Aort koarktasyonu", "Patent duktus arteriozus (PDA)", "Ventriküler septal defekt (VSD)"], correct: 0 },
+            { q: "3 aylık bir bebekte demir eksikliği anemisi beklenir mi?", options: ["Evet, en sık görülen anemidir", "Hayır, bebeğin depo demiri genellikle 4-6. aya kadar yeter", "Sadece anne vejetaryense beklenir"], correct: 1 }
         ];
         
         const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
@@ -688,8 +723,49 @@ class HospitalGuardGame {
             }, 3000);
             
             this.showFeedback('Bebek kurtarıldı! +100 puan', 'success');
+            
+            this.currentCriticalBaby = null;
         } else {
-            this.loseBaby();
+            // Başarısız mini oyun - bebek kaybedildi
+            const lostBabyId = this.currentCriticalBaby;
+            this.currentCriticalBaby = null;
+            
+            // loseBaby'yi çağır (Görkem gelecek)
+            this.lostCount++;
+            if (lostBabyId !== null) {
+                this.setBabyState(lostBabyId, 'normal');
+            }
+            
+            this.showFeedback(`Bebek kaybedildi! (${this.lostCount}/100)`, 'error');
+            
+            if (this.lostCount >= 100) {
+                // Hide rescue game first
+                document.getElementById('game-overlay').style.display = 'none';
+                document.getElementById('baby-rescue-game').style.display = 'none';
+                this.endGame(false);
+                return;
+            }
+            
+            this.score = Math.max(0, this.score - 50);
+            
+            // Görkem her bebek kaybında geliyor!
+            const shouldCallGorkem = !this.gorkemAppeared;
+            
+            // Hide rescue game
+            document.getElementById('game-overlay').style.display = 'none';
+            document.getElementById('baby-rescue-game').style.display = 'none';
+            
+            this.gameState = 'MONITORING';
+            this.updateUI();
+            
+            if (shouldCallGorkem) {
+                setTimeout(() => {
+                    if (!this.gorkemAppeared && this.gameState === 'MONITORING') {
+                        this.appearGorkem();
+                    }
+                }, 2000);
+            }
+            return;
         }
         
         this.currentCriticalBaby = null;

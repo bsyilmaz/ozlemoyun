@@ -197,7 +197,7 @@ body {
     text-align: center;
     transition: all 0.3s ease;
     position: absolute;
-    bottom: 50px;
+    bottom: 100px;
     right: 20px;
     z-index: 5;
 }
@@ -602,7 +602,7 @@ body {
     }
     
     .doctor-character {
-        bottom: 80px;
+        bottom: 120px;
         right: 10px;
     }
     
@@ -650,7 +650,7 @@ body {
     }
     
     .doctor-character {
-        bottom: 60px;
+        bottom: 100px;
         right: 5px;
     }
     
