@@ -14,17 +14,17 @@ class HospitalGuardGame {
         
         // Game settings
         this.maxBabies = 4;
-        this.criticalChance = 0.3; // 30% chance per second
-        this.gorkemChance = 0.1; // 10% chance per 5 seconds
-        this.gameDuration = 120; // 2 minutes in seconds
+        this.criticalChance = 0.2; // 20% chance per second
+        this.gorkemChance = 0.3; // 30% chance per 5 seconds - Görkem daha sık gelir
+        this.gameDuration = 300; // 5 minutes in seconds (5 dakika)
+        this.gorkemAppearCount = 0; // Görkem kaç kere geldi
         this.randomEventIntervals = []; // Track intervals for cleanup
         
         // Mobile detection and optimization
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (this.isMobile) {
             // Easier settings for mobile
-            this.criticalChance = 0.25; // Slightly easier
-            this.gameDuration = 90; // Shorter game for mobile
+            this.criticalChance = 0.18; // Slightly easier
         }
         
         this.init();
@@ -210,11 +210,12 @@ class HospitalGuardGame {
         }, 1000);
         this.randomEventIntervals.push(criticalInterval);
 
-        // Görkem appearance
+        // Görkem appearance - bebek kurtarma sırasında gelmesin
         const gorkemInterval = setInterval(() => {
-            if (this.gameState === 'MONITORING' && !this.gorkemAppeared) {
+            if (this.gameState === 'MONITORING' && !this.gorkemAppeared && !this.currentCriticalBaby && this.gorkemAppearCount < 4) {
                 if (Math.random() < this.gorkemChance) {
                     this.appearGorkem();
+                    this.gorkemAppearCount++;
                 }
             }
         }, 5000);
@@ -337,9 +338,9 @@ class HospitalGuardGame {
         
         rescueHeader.textContent = '💉 İğne Yapma!';
         const target = this.isMobile ? 2 : 3;
-        rescueInstructions.textContent = `İğneyi bebek poposuna tıklayın! (${target} kez)`;
+        rescueInstructions.textContent = `İğneyi bebek poposuna sürükleyip bırakın! (${target} kez)`;
         
-        this.startInjectionClickGame();
+        this.startInjectionDragGame();
     }
 
     // Quiz Mini-game
@@ -363,27 +364,41 @@ class HospitalGuardGame {
         
         // Show full screen heart image with counter
         targetZone.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <div class="heart-image" style="position: relative;">
-                    <div class="cpr-counter" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 64px; font-weight: bold; color: #f44336; text-shadow: 3px 3px 6px rgba(0,0,0,0.5); z-index: 10;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 30px;">
+                <div style="width: 100%; max-width: 400px; height: 400px; background-image: url('images/kalp.png'); background-size: contain; background-repeat: no-repeat; background-position: center; cursor: pointer; position: relative; transition: transform 0.1s;">
+                    <div class="cpr-counter" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 72px; font-weight: bold; color: #f44336; text-shadow: 4px 4px 8px rgba(0,0,0,0.7); z-index: 10; background: rgba(255,255,255,0.9); padding: 20px 30px; border-radius: 20px;">
                         ${this.cprClicks}/${this.cprTarget}
                     </div>
                 </div>
             </div>
         `;
         
-        // Add click event listener to heart
-        const heartImage = targetZone.querySelector('.heart-image');
+        // Add click event listener to heart area
+        const heartContainer = targetZone.querySelector('div[style*="kalp.png"]');
         const counter = targetZone.querySelector('.cpr-counter');
         
-        if (heartImage) {
+        if (heartContainer) {
             const handleHeartClick = () => {
-                this.handleRescueClick();
+                this.cprClicks++;
                 counter.textContent = `${this.cprClicks}/${this.cprTarget}`;
+                
+                // Visual feedback
+                heartContainer.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    heartContainer.style.transform = 'scale(1)';
+                }, 100);
+                
+                const instructions = document.querySelector('.rescue-instructions p');
+                instructions.textContent = `Kalp Masajı: ${this.cprClicks}/${this.cprTarget} tıklama`;
+                
+                if (this.cprClicks >= this.cprTarget) {
+                    clearInterval(this.rescueInterval);
+                    this.endBabyRescueGame(true);
+                }
             };
             
-            heartImage.addEventListener('click', handleHeartClick);
-            heartImage.addEventListener('touchend', (e) => {
+            heartContainer.addEventListener('click', handleHeartClick);
+            heartContainer.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 handleHeartClick();
             });
@@ -409,52 +424,111 @@ class HospitalGuardGame {
         this.rescueInterval = interval;
     }
 
-    startInjectionClickGame() {
+    startInjectionDragGame() {
         const targetZone = document.getElementById('rescue-target');
         
         // Injection requires clicks
         this.injectionClicks = 0;
         this.injectionTarget = this.isMobile ? 2 : 3;
         
-        // Show simple click interface
+        // Show drag and drop interface with baby butt and syringe
         targetZone.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 40px;">
-                <div class="baby-butt-clickable" style="width: 280px; height: 280px; background-image: url('images/bebekpoposu.png'); background-size: contain; background-repeat: no-repeat; background-position: center; border: 4px solid #4CAF50; border-radius: 20px; cursor: pointer; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s;">
-                    <div class="injection-counter" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; font-weight: bold; color: #4CAF50; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-around; gap: 40px; padding: 30px; flex-wrap: wrap;">
+                <div class="baby-butt-target" style="width: 280px; height: 280px; background-image: url('images/bebekpoposu.png'); background-size: contain; background-repeat: no-repeat; background-position: center; border: 4px solid #4CAF50; border-radius: 20px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div class="injection-zone-large" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; background: rgba(76, 175, 80, 0.3); border: 3px dashed #4CAF50; border-radius: 50%; animation: pulseZone 1.5s infinite;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                    <div class="injection-counter" style="font-size: 48px; font-weight: bold; color: #4CAF50; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
                         ${this.injectionClicks}/${this.injectionTarget}
                     </div>
+                    <div class="syringe-drag" style="width: 120px; height: 120px; background-image: url('images/igne.png'); background-size: contain; background-repeat: no-repeat; background-position: center; cursor: grab; border: 3px solid #2196F3; border-radius: 12px; background-color: rgba(33, 150, 243, 0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative;"></div>
                 </div>
             </div>
         `;
         
-        const babyButt = targetZone.querySelector('.baby-butt-clickable');
+        const syringe = targetZone.querySelector('.syringe-drag');
+        const babyButt = targetZone.querySelector('.baby-butt-target');
+        const injectionZone = targetZone.querySelector('.injection-zone-large');
         const counter = targetZone.querySelector('.injection-counter');
         
-        // Click handler
-        const handleClick = () => {
-            this.injectionClicks++;
-            counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
-            
-            // Visual feedback
-            babyButt.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                babyButt.style.transform = 'scale(1)';
-            }, 100);
-            
-            const instructions = document.querySelector('.rescue-instructions p');
-            instructions.textContent = `✅ Harika! ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
-            
-            if (this.injectionClicks >= this.injectionTarget) {
-                clearInterval(this.rescueInterval);
-                this.endBabyRescueGame(true);
-            }
+        let isDragging = false;
+        let startX, startY;
+        const syringeOriginal = syringe.getBoundingClientRect();
+        
+        // Drag handler
+        const handleDragStart = (e) => {
+            isDragging = true;
+            syringe.style.cursor = 'grabbing';
+            syringe.style.zIndex = '1000';
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            startX = clientX - syringe.offsetLeft;
+            startY = clientY - syringe.offsetTop;
         };
         
-        babyButt.addEventListener('click', handleClick);
-        babyButt.addEventListener('touchend', (e) => {
+        const handleDragMove = (e) => {
+            if (!isDragging) return;
             e.preventDefault();
-            handleClick();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            syringe.style.position = 'fixed';
+            syringe.style.left = (clientX - startX) + 'px';
+            syringe.style.top = (clientY - startY) + 'px';
+        };
+        
+        const handleDragEnd = (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            syringe.style.cursor = 'grab';
+            
+            // Check collision with injection zone
+            const syringeRect = syringe.getBoundingClientRect();
+            const zoneRect = injectionZone.getBoundingClientRect();
+            
+            if (syringeRect.left < zoneRect.right &&
+                syringeRect.right > zoneRect.left &&
+                syringeRect.top < zoneRect.bottom &&
+                syringeRect.bottom > zoneRect.top) {
+                
+                // Success!
+                this.injectionClicks++;
+                counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
+                
+                const instructions = document.querySelector('.rescue-instructions p');
+                instructions.textContent = `✅ Harika! ${this.injectionClicks}/${this.injectionTarget} başarılı enjeksiyon`;
+                
+                // Visual feedback
+                injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
+                setTimeout(() => {
+                    injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
+                }, 500);
+                
+                if (this.injectionClicks >= this.injectionTarget) {
+                    clearInterval(this.rescueInterval);
+                    this.endBabyRescueGame(true);
+                }
+            }
+            
+            // Reset syringe position
+            syringe.style.position = 'relative';
+            syringe.style.left = '0';
+            syringe.style.top = '0';
+            syringe.style.zIndex = '10';
+        };
+        
+        // Mouse events
+        syringe.addEventListener('mousedown', handleDragStart);
+        document.addEventListener('mousemove', handleDragMove);
+        document.addEventListener('mouseup', handleDragEnd);
+        
+        // Touch events
+        syringe.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleDragStart(e);
         });
+        document.addEventListener('touchmove', handleDragMove, { passive: false });
+        document.addEventListener('touchend', handleDragEnd);
         
         // Timer for 15 seconds (more time for clicking)
         let timeLeft = 15;
@@ -1058,16 +1132,76 @@ class HospitalGuardGame {
         }, 200);
         
         // Calculate damage based on tool
-        const toolDamage = this.getToolDamage(toolButton.dataset.tool);
+        const toolType = toolButton.dataset.tool;
+        const toolDamage = this.getToolDamage(toolType);
         this.bossHealth -= toolDamage;
         
         if (this.bossHealth < 0) this.bossHealth = 0;
+        
+        // Show funny message based on tool
+        this.showToolMessage(toolType);
         
         this.updateBossHealth();
         
         if (this.bossHealth <= 0) {
             this.endBossFight();
         }
+    }
+    
+    showToolMessage(tool) {
+        const messages = {
+            'syringe': '💉 Şırınga ile Görkem\'in boynunu kestiniz! -15 HP',
+            'stethoscope': '🩺 Stetoskopu Görkem\'e fırlattınız! -10 HP',
+            'thermometer': '🌡️ Termometreyi Görkem\'e monte ettiniz! -8 HP',
+            'scalpel': '🔪 Bistüri ile Görkem\'i yaraladınız! -20 HP',
+            'pill': '💊 Görkem\'in kahvesine ilaç döktünüz! -12 HP',
+            'bandage': '🩹 Görkem\'in bandajını çıkarttınız! -5 HP'
+        };
+        
+        const message = messages[tool] || 'Saldırı!';
+        
+        // Show message near Görkem
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(156, 39, 176, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 5000;
+            animation: toolMessageFade 1.5s ease-out forwards;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        `;
+        
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes toolMessageFade {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+                80% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -70%) scale(0.8); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(messageDiv);
+        
+        // Remove after animation
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+            if (style.parentNode) {
+                style.parentNode.removeChild(style);
+            }
+        }, 1500);
     }
 
     getToolDamage(tool) {
@@ -1105,7 +1239,7 @@ class HospitalGuardGame {
 
     endBossFight() {
         this.score += 500; // Bonus for defeating Görkem
-        this.gorkemAppeared = false;
+        this.gorkemAppeared = false; // Görkem'i tekrar gelebilir hale getir
         
         // Remove Görkem from room
         const gorkemInRoom = document.querySelector('.gorkem-in-room');
@@ -1181,6 +1315,7 @@ class HospitalGuardGame {
         this.gameTime = 0;
         this.bossHealth = 100;
         this.gorkemAppeared = false;
+        this.gorkemAppearCount = 0; // Görkem sayacını sıfırla
         this.currentCriticalBaby = null;
         
         // Clear timers
