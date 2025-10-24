@@ -2,12 +2,12 @@
   "name": "Hastane Bekçisi - Hospital Guard Game",
   "short_name": "Hastane Bekçisi",
   "description": "Yenidoğan bebekleri izleyin ve onları kurtarın!",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#4CAF50",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "./",
   "icons": [
     {
       "src": "images/hospital-room-bg.png",
@@ -23,6 +23,5 @@
     }
   ],
   "categories": ["games", "entertainment"],
-  "lang": "tr",
-  "prefer_related_applications": false
+  "lang": "tr"
 }

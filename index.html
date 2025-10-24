@@ -11,11 +11,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Hastane Bekçisi">
-    <meta name="application-name" content="Hastane Bekçisi">
-    <meta name="msapplication-TileColor" content="#4CAF50">
-    <meta name="msapplication-tap-highlight" content="no">
 </head>
-<body ondblclick="event.preventDefault()">
+<body>
     <div class="game-container">
         <!-- Game Header -->
         <div class="game-header">
@@ -49,8 +46,6 @@
                 </div>
             </div>
 
-            <!-- Glass Window Divider -->
-
             <!-- Doctor Station (Right Side) -->
             <div class="doctor-station">
                 <div class="doctor-area">
@@ -71,18 +66,8 @@
         <div class="game-overlay" id="game-overlay" style="display: none;">
             <!-- Baby Rescue Mini-game -->
             <div class="baby-rescue-game" id="baby-rescue-game" style="display: none;">
-                <div class="rescue-header">
-                    <h3>🚨 Bebek Kurtarma!</h3>
-                    <p>Doğru zamanda tıklayın!</p>
-                </div>
-                <div class="rescue-timer">
-                    <div class="rescue-bar">
-                        <div class="rescue-progress" id="rescue-progress"></div>
-                    </div>
-                    <div class="rescue-target" id="rescue-target"></div>
-                </div>
-                <div class="rescue-instructions">
-                    <p>Yeşil alana geldiğinde tıklayın!</p>
+                <div class="rescue-content" id="rescue-content">
+                    <!-- Mini-game content will be dynamically loaded -->
                 </div>
             </div>
 
@@ -104,12 +89,12 @@
                 <div class="medical-tools">
                     <h4>Tıbbi Aletler:</h4>
                     <div class="tools-grid">
-                        <button class="tool-btn" data-tool="syringe">💉 Şırınga</button>
-                        <button class="tool-btn" data-tool="stethoscope">🩺 Stetoskop</button>
-                        <button class="tool-btn" data-tool="thermometer">🌡️ Termometre</button>
-                        <button class="tool-btn" data-tool="scalpel">🔪 Bistüri</button>
-                        <button class="tool-btn" data-tool="bandage">🩹 Bandaj</button>
-                        <button class="tool-btn" data-tool="pill">💊 İlaç</button>
+                        <button class="tool-btn" data-tool="syringe" data-damage="15">💉 Şırınga</button>
+                        <button class="tool-btn" data-tool="stethoscope" data-damage="10">🩺 Stetoskop</button>
+                        <button class="tool-btn" data-tool="thermometer" data-damage="8">🌡️ Termometre</button>
+                        <button class="tool-btn" data-tool="scalpel" data-damage="20">🔪 Bistüri</button>
+                        <button class="tool-btn" data-tool="bandage" data-damage="5">🩹 Bandaj</button>
+                        <button class="tool-btn" data-tool="pill" data-damage="12">💊 İlaç</button>
                     </div>
                 </div>
             </div>

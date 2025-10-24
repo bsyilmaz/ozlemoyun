@@ -6,20 +6,20 @@ Yenidoğan bebekleri izleyin ve onları kurtarın! Bir hastane bekçisi olarak g
 
 ### Ana Oynanış
 - **Bebek İzleme**: 4 bebeği aynı anda izleyin
-- **Kritik Durumlar**: Bebekler rastgele kritik duruma girebilir
+- **Kritik Durumlar**: Bebekler rastgele kritik duruma girebilir (8 saniye içinde müdahale edin)
 - **Mini Oyunlar**: Bebekleri kurtarmak için 3 farklı mini oyun:
-  - ❤️ **Kalp Masajı (CPR)**: Kalbe yeterli sayıda tıklayın
-  - 💉 **İğne Yapma**: İğneyi bebeğin doğru yerine sürükleyin
+  - ❤️ **Kalp Masajı (CPR)**: Kalbe yeterli sayıda tıklayın (Mobil: 30, Masaüstü: 50)
+  - 💉 **İğne Yapma**: İğneyi bebek poposuna sürükleyin (Mobil: 2, Masaüstü: 3 kez)
   - 🧠 **Tıbbi Bilgi Testi**: Yenidoğan bakımı hakkında soruları cevaplayın
 
 ### Boss Savaşı
 - **Görkem ile Mücadele**: Kapıdan giren Görkem'i tıbbi aletlerle yenin
 - 6 farklı tıbbi aletle saldırın
-- Görkem'i yenerek bonus puan kazanın
+- Görkem'i yenerek +500 bonus puan kazanın
 
 ## 🎯 Oyun Kuralları
 
-- **Süre**: Masaüstünde 2 dakika, mobilde 90 saniye
+- **Süre**: 5 dakika (300 saniye)
 - **Bebek Kurtarma**: Her kurtarılan bebek +100 puan
 - **Bebek Kaybı**: Her kaybedilen bebek -50 puan
 - **Zaman Sınırı**: Kritik bebeklere 8 saniye içinde müdahale edin
@@ -29,7 +29,7 @@ Yenidoğan bebekleri izleyin ve onları kurtarın! Bir hastane bekçisi olarak g
 
 ### Mobil Uyumluluk
 - ✅ Dokunmatik ekran desteği
-- ✅ Mobil için optimize edilmiş zorluk
+- ✅ Mobil için optimize edilmiş zorluk (daha kolay hedefler)
 - ✅ Responsive tasarım
 - ✅ Yatay ve dikey mod desteği
 
@@ -44,15 +44,15 @@ Yenidoğan bebekleri izleyin ve onları kurtarın! Bir hastane bekçisi olarak g
 ### Kullanılan Teknolojiler
 - HTML5
 - CSS3 (Animasyonlar ve Responsive Tasarım)
-- Vanilla JavaScript (ES6+)
+- Vanilla JavaScript (ES6+ Class Syntax)
 - PWA Desteği (Progressive Web App)
 
 ### Dosya Yapısı
 ```
 ozlemoyun/
 ├── index.html          # Ana HTML dosyası
-├── game.js            # Oyun mantığı
-├── styles.css         # Stil dosyası
+├── game.js            # Oyun mantığı (Temiz ES6 Class)
+├── styles.css         # Stil dosyası (Modüler CSS)
 ├── manifest.json      # PWA manifest
 ├── images/            # Oyun görselleri
 │   ├── baby-normal.png
@@ -70,16 +70,20 @@ ozlemoyun/
 ## 🚀 Kurulum ve Çalıştırma
 
 ### Yerel Olarak Çalıştırma
-1. Projeyi klonlayın veya indirin
+1. Projeyi klonlayın:
+```bash
+git clone https://github.com/yourusername/ozlemoyun.git
+cd ozlemoyun
+```
+
 2. `index.html` dosyasını bir web tarayıcısında açın
-3. Oyunu oynayın!
 
 ### Web Sunucusu ile Çalıştırma
 ```bash
 # Python ile basit sunucu (Python 3)
 python -m http.server 8000
 
-# Node.js ile basit sunucu (http-server paketi ile)
+# Node.js ile basit sunucu
 npx http-server -p 8000
 ```
 
@@ -90,51 +94,52 @@ Tarayıcınızda `http://localhost:8000` adresine gidin.
 Oyun, yenidoğan bakımı hakkında gerçek tıbbi bilgiler içerir:
 - APGAR skorlaması
 - Yenidoğan sarılığı
-- Fizyolojik değerler
-- Temel tıbbi prosedürler
+- Fizyolojik değerler (kalp atış hızı, solunum sayısı)
+- Temel tıbbi prosedürler (K vitamini, göz merhemi)
 - Prematüre bebek bakımı
+- Metabolik tarama (topuk kanı)
 
 ## 🏆 İpuçları
 
-1. **Hızlı Reaksiyon**: Kritik bebeklere hızlıca müdahale edin
+1. **Hızlı Reaksiyon**: Kritik bebeklere hızlıca müdahale edin (8 saniye sınırı var)
 2. **Bilgi Gücü**: Quiz sorularını öğrenmek sonraki oyunlarda yardımcı olur
-3. **Mobil Avantajı**: Mobilde oyun biraz daha kolay
-4. **Görkem'e Dikkat**: Görkem'i yenmek büyük bonus verir
-5. **Puan Yönetimi**: Kayıp bebekler puanınızı düşürür
+3. **Mobil Avantajı**: Mobilde oyun biraz daha kolay (daha düşük hedefler)
+4. **Görkem'e Dikkat**: Görkem'i yenmek 500 bonus puan verir
+5. **Puan Yönetimi**: Kayıp bebekler puanınızı 50 puan düşürür
 
-## 🔧 Son Düzeltmeler ve İyileştirmeler
-
-### Düzeltilen Hatalar
-- ✅ CSS syntax hataları düzeltildi
-- ✅ Bellek sızıntılarına neden olan interval'lar temizleniyor
-- ✅ Mobil dokunmatik olay optimizasyonları
-- ✅ Mini oyun zorluk seviyeleri dengelendi
-- ✅ Bebek zaman aşımı süreleri iyileştirildi
-- ✅ Quiz popup'larının çoğaltılması önlendi
+## 🔧 Versiyon 2.0 - Temiz Kod
 
 ### Yapılan İyileştirmeler
-- ⚡ CPR zorluk seviyesi: 100'den 50'ye (masaüstü) ve 30'a (mobil) düşürüldü
-- ⏱️ Kritik bebek müdahale süresi: 5 saniyeden 8 saniyeye çıkarıldı
-- 💉 İğne oyunu: Mobilde 2, masaüstünde 3 başarılı enjeksiyon
-- 🔄 Kaybedilen bebekler oyunda kalıyor (normal duruma dönüyor)
-- 📊 İlerleme çubukları tüm mini oyunlarda gösteriliyor
-- 🧹 Oyun yeniden başlatılırken tüm kaynaklar temizleniyor
+- ✅ Tamamen yeniden yazılmış temiz kod
+- ✅ Modern ES6 Class yapısı
+- ✅ Tüm timer ve interval'lar düzgün temizleniyor
+- ✅ Hata yönetimi eklendi
+- ✅ Mobil uyumluluk geliştirildi
+- ✅ Performans optimizasyonları
+- ✅ Kod organizasyonu ve yorumlar
+
+### Önceki Versiyondaki Sorunlar Çözüldü
+- ❌ CSS syntax hataları → ✅ Düzeltildi
+- ❌ Bellek sızıntıları → ✅ Tüm kaynaklar düzgün temizleniyor
+- ❌ Karmaşık kod yapısı → ✅ Temiz ve anlaşılır kod
+- ❌ Tutarsız oyun durumu → ✅ Güvenilir state yönetimi
+- ❌ Mini oyun hataları → ✅ Tüm mini oyunlar düzgün çalışıyor
 
 ## 📝 Geliştirici Notları
 
 ### Oyun Sınıfı Yapısı
 ```javascript
 HospitalGuardGame
-├── Constructor (Oyun ayarları)
-├── init() (Başlatma)
+├── Constructor (Oyun başlatma ve ayarlar)
+├── init() (İlk kurulum)
 ├── setupEventListeners() (Olay dinleyicileri)
 ├── createBabies() (Bebek oluşturma)
 ├── startGame() (Oyunu başlat)
 ├── startRandomEvents() (Rastgele olaylar)
 ├── Mini Oyunlar
-│   ├── startCPRGame()
-│   ├── startInjectionGame()
-│   └── startQuizGame()
+│   ├── loadCPRGame()
+│   ├── loadInjectionGame()
+│   └── loadQuizGame()
 ├── Boss Savaşı
 │   ├── appearGorkem()
 │   ├── startBossFight()
@@ -142,8 +147,15 @@ HospitalGuardGame
 └── Yardımcı Fonksiyonlar
     ├── updateUI()
     ├── showFeedback()
-    └── clearRandomEvents()
+    └── Temizlik fonksiyonları
 ```
+
+## 🐛 Hata Ayıklama
+
+Oyun konsolda ayrıntılı log mesajları verir. Sorun yaşarsanız:
+1. Tarayıcı konsolunu açın (F12)
+2. Console sekmesini kontrol edin
+3. Hata mesajlarını okuyun
 
 ## 📄 Lisans
 
@@ -151,10 +163,11 @@ Bu proje eğitim amaçlıdır.
 
 ## 🤝 Katkıda Bulunma
 
-Oyunu geliştirmek için önerilerinizi paylaşabilirsiniz!
+Pull request'ler memnuniyetle karşılanır! Büyük değişiklikler için lütfen önce bir issue açarak ne değiştirmek istediğinizi tartışın.
 
 ---
 
-**Oyunu geliştiren**: Bayram Selim Yılmaz
-**Versiyon**: 1.1.0
-**Son Güncelleme**: Ekim 2025
+**Geliştiren**: Bayram Selim Yılmaz  
+**Versiyon**: 2.0.0 (Temiz Kod)  
+**Son Güncelleme**: Ekim 2025  
+**Durum**: ✅ Kararlı ve Hatasız
