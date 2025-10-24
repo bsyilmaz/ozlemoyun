@@ -320,11 +320,17 @@ class HospitalGuardGame {
                          color: #4CAF50;">
                         ${this.injectionClicks}/${this.injectionTarget}
                     </div>
-                    <div id="syringe" draggable="true" style="width: 100px; height: 100px; 
+                    <div id="syringe" style="width: 120px; height: 120px; 
                          background-image: url('images/igne.png'); background-size: contain; 
                          background-repeat: no-repeat; background-position: center; cursor: grab; 
-                         border: 3px solid #2196F3; border-radius: 12px; 
-                         background-color: rgba(33, 150, 243, 0.2);"></div>
+                         border: 4px solid #2196F3; border-radius: 12px; 
+                         background-color: rgba(33, 150, 243, 0.2); 
+                         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                         transition: transform 0.2s ease, box-shadow 0.2s ease;
+                         touch-action: none;"></div>
+                    <div style="font-size: 14px; color: #666; text-align: center; margin-top: 5px;">
+                        📱 Sürükle ve yeşil alana bırak
+                    </div>
                 </div>
             </div>
         `;
@@ -349,89 +355,199 @@ class HospitalGuardGame {
         if (!syringe || !injectionZone) return;
         
         let isDragging = false;
+        let startX, startY;
+        let initialLeft, initialTop;
         
-        const handleDragStart = (e) => {
+        // Get initial position
+        const syringeParent = syringe.parentElement;
+        const parentRect = syringeParent.getBoundingClientRect();
+        
+        // Mouse events for desktop
+        syringe.addEventListener('mousedown', (e) => {
+            e.preventDefault();
             isDragging = true;
             syringe.style.cursor = 'grabbing';
-        };
+            syringe.style.position = 'fixed';
+            syringe.style.zIndex = '1000';
+            
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            const rect = syringe.getBoundingClientRect();
+            syringe.style.left = rect.left + 'px';
+            syringe.style.top = rect.top + 'px';
+        });
         
-        const handleDragEnd = (e) => {
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            const rect = syringe.getBoundingClientRect();
+            syringe.style.left = (rect.left + deltaX) + 'px';
+            syringe.style.top = (rect.top + deltaY) + 'px';
+            
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+        
+        document.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            
             isDragging = false;
             syringe.style.cursor = 'grab';
             
-            const syringeRect = syringe.getBoundingClientRect();
-            const zoneRect = injectionZone.getBoundingClientRect();
+            this.checkInjectionCollision(syringe, injectionZone);
             
-            // Check collision
-            if (syringeRect.left < zoneRect.right &&
-                syringeRect.right > zoneRect.left &&
-                syringeRect.top < zoneRect.bottom &&
-                syringeRect.bottom > zoneRect.top) {
-                
-                this.injectionClicks++;
-                const counter = document.getElementById('injection-counter');
-                if (counter) {
-                    counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
-                }
-                
-                // Visual feedback
-                injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
-                setTimeout(() => {
-                    injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
-                }, 300);
-                
-                if (this.injectionClicks >= this.injectionTarget) {
-                    if (this.rescueTimer) {
-                        clearInterval(this.rescueTimer);
-                    }
-                    this.endBabyRescueGame(true);
-                }
-            }
-        };
+            // Reset position
+            syringe.style.position = 'relative';
+            syringe.style.left = '0';
+            syringe.style.top = '0';
+            syringe.style.zIndex = '10';
+        });
         
-        syringe.addEventListener('dragstart', handleDragStart);
-        syringe.addEventListener('dragend', handleDragEnd);
-        
-        // Touch events for mobile
-        let touchStartX, touchStartY;
-        
+        // Touch events for mobile - IMPROVED
         syringe.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            
             const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            syringe.style.cursor = 'grabbing';
-        });
+            startX = touch.clientX;
+            startY = touch.clientY;
+            
+            syringe.style.position = 'fixed';
+            syringe.style.zIndex = '1000';
+            
+            const rect = syringe.getBoundingClientRect();
+            syringe.style.left = rect.left + 'px';
+            syringe.style.top = rect.top + 'px';
+            
+            // Visual feedback
+            syringe.style.transform = 'scale(1.1)';
+            syringe.style.opacity = '0.8';
+        }, { passive: false });
         
-        syringe.addEventListener('touchend', (e) => {
-            syringe.style.cursor = 'grab';
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
             
-            const syringeRect = syringe.getBoundingClientRect();
-            const zoneRect = injectionZone.getBoundingClientRect();
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - startX;
+            const deltaY = touch.clientY - startY;
             
-            if (syringeRect.left < zoneRect.right &&
-                syringeRect.right > zoneRect.left &&
-                syringeRect.top < zoneRect.bottom &&
-                syringeRect.bottom > zoneRect.top) {
-                
-                this.injectionClicks++;
-                const counter = document.getElementById('injection-counter');
-                if (counter) {
-                    counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
-                }
-                
-                injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
-                setTimeout(() => {
-                    injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
-                }, 300);
-                
-                if (this.injectionClicks >= this.injectionTarget) {
-                    if (this.rescueTimer) {
-                        clearInterval(this.rescueTimer);
-                    }
-                    this.endBabyRescueGame(true);
-                }
+            const rect = syringe.getBoundingClientRect();
+            syringe.style.left = (rect.left + deltaX) + 'px';
+            syringe.style.top = (rect.top + deltaY) + 'px';
+            
+            startX = touch.clientX;
+            startY = touch.clientY;
+        }, { passive: false });
+        
+        document.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            isDragging = false;
+            
+            // Reset visual feedback
+            syringe.style.transform = 'scale(1)';
+            syringe.style.opacity = '1';
+            
+            this.checkInjectionCollision(syringe, injectionZone);
+            
+            // Reset position
+            syringe.style.position = 'relative';
+            syringe.style.left = '0';
+            syringe.style.top = '0';
+            syringe.style.zIndex = '10';
+        }, { passive: false });
+    }
+    
+    checkInjectionCollision(syringe, injectionZone) {
+        const syringeRect = syringe.getBoundingClientRect();
+        const zoneRect = injectionZone.getBoundingClientRect();
+        
+        // Check collision with more tolerance for mobile
+        const tolerance = this.isMobile ? 20 : 10;
+        
+        if (syringeRect.left < (zoneRect.right + tolerance) &&
+            (syringeRect.right - tolerance) > zoneRect.left &&
+            syringeRect.top < (zoneRect.bottom + tolerance) &&
+            (syringeRect.bottom - tolerance) > zoneRect.top) {
+            
+            this.injectionClicks++;
+            const counter = document.getElementById('injection-counter');
+            if (counter) {
+                counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
             }
-        });
+            
+            // Visual feedback
+            injectionZone.style.background = 'rgba(76, 175, 80, 0.8)';
+            injectionZone.style.transform = 'translate(-50%, -50%) scale(1.2)';
+            
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.textContent = '✅ Başarılı!';
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 30%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-size: 20px;
+                font-weight: bold;
+                z-index: 5000;
+                animation: fadeOut 1s forwards;
+            `;
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => {
+                injectionZone.style.background = 'rgba(76, 175, 80, 0.3)';
+                injectionZone.style.transform = 'translate(-50%, -50%) scale(1)';
+                if (successMsg.parentNode) {
+                    successMsg.parentNode.removeChild(successMsg);
+                }
+            }, 500);
+            
+            if (this.injectionClicks >= this.injectionTarget) {
+                if (this.rescueTimer) {
+                    clearInterval(this.rescueTimer);
+                }
+                setTimeout(() => {
+                    this.endBabyRescueGame(true);
+                }, 500);
+            }
+        } else {
+            // Show miss feedback
+            const missMsg = document.createElement('div');
+            missMsg.textContent = '❌ Kaçırdın!';
+            missMsg.style.cssText = `
+                position: fixed;
+                top: 30%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #f44336;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                z-index: 5000;
+                animation: fadeOut 0.8s forwards;
+            `;
+            document.body.appendChild(missMsg);
+            
+            setTimeout(() => {
+                if (missMsg.parentNode) {
+                    missMsg.parentNode.removeChild(missMsg);
+                }
+            }, 800);
+        }
     }
     
     loadQuizGame(container) {
@@ -480,11 +596,74 @@ class HospitalGuardGame {
         `;
         
         const options = container.querySelectorAll('.quiz-option');
-        options.forEach(option => {
+        let answered = false;
+        
+        options.forEach((option, idx) => {
             option.addEventListener('click', (e) => {
+                if (answered) return; // Prevent multiple answers
+                answered = true;
+                
                 const selectedAnswer = parseInt(e.target.dataset.answer);
                 const isCorrect = selectedAnswer === randomQuestion.correct;
-                this.endBabyRescueGame(isCorrect);
+                
+                // Disable all options
+                options.forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                    opt.style.opacity = '0.6';
+                });
+                
+                // Show correct answer in green
+                options[randomQuestion.correct].style.background = '#4CAF50';
+                options[randomQuestion.correct].style.color = 'white';
+                options[randomQuestion.correct].style.border = '3px solid #2E7D32';
+                options[randomQuestion.correct].style.fontWeight = 'bold';
+                options[randomQuestion.correct].style.opacity = '1';
+                
+                // Add checkmark to correct answer
+                options[randomQuestion.correct].innerHTML = '✅ ' + options[randomQuestion.correct].textContent;
+                
+                // If selected answer is wrong, show it in red
+                if (!isCorrect) {
+                    e.target.style.background = '#f44336';
+                    e.target.style.color = 'white';
+                    e.target.style.border = '3px solid #C62828';
+                    e.target.style.opacity = '1';
+                    e.target.innerHTML = '❌ ' + e.target.textContent;
+                }
+                
+                // Show feedback message
+                const feedbackMsg = document.createElement('div');
+                feedbackMsg.textContent = isCorrect ? 
+                    '🎉 Doğru! Tebrikler!' : 
+                    '❌ Yanlış! Doğru cevap yeşil ile işaretlendi.';
+                feedbackMsg.style.cssText = `
+                    position: fixed;
+                    top: 20%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: ${isCorrect ? '#4CAF50' : '#f44336'};
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    z-index: 5000;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                `;
+                container.appendChild(feedbackMsg);
+                
+                // Clear timer
+                if (this.rescueTimer) {
+                    clearInterval(this.rescueTimer);
+                }
+                
+                // Wait 3 seconds to let player see the correct answer, then end game
+                setTimeout(() => {
+                    if (feedbackMsg.parentNode) {
+                        feedbackMsg.parentNode.removeChild(feedbackMsg);
+                    }
+                    this.endBabyRescueGame(isCorrect);
+                }, 3000);
             });
         });
         
@@ -492,7 +671,7 @@ class HospitalGuardGame {
         let timeLeft = 30;
         this.rescueTimer = setInterval(() => {
             timeLeft--;
-            if (timeLeft <= 0) {
+            if (timeLeft <= 0 && !answered) {
                 clearInterval(this.rescueTimer);
                 this.endBabyRescueGame(false);
             }
