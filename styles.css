@@ -577,22 +577,28 @@ body {
     }
     
     .babies-container {
-        padding: 10px;
-        gap: 8px;
+        padding: 20px 10px;
+        gap: 15px;
+        padding-top: 80px;
+        justify-content: flex-start;
     }
     
     .baby {
-        width: 80px;
-        height: 80px;
+        width: 140px;
+        height: 140px;
+        min-width: 140px;
+        min-height: 140px;
     }
     
     .baby-sprite {
-        width: 60px;
-        height: 60px;
+        width: 110px;
+        height: 110px;
+        min-height: 110px;
     }
     
     .baby-status {
-        font-size: 10px;
+        font-size: 14px;
+        padding: 8px 12px;
     }
     
     .doctor-character {
@@ -620,14 +626,27 @@ body {
 }
 
 @media (max-width: 480px) {
+    .babies-container {
+        padding-top: 60px;
+        gap: 12px;
+    }
+    
     .baby {
-        width: 70px;
-        height: 70px;
+        width: 120px;
+        height: 120px;
+        min-width: 120px;
+        min-height: 120px;
     }
     
     .baby-sprite {
-        width: 50px;
-        height: 50px;
+        width: 95px;
+        height: 95px;
+        min-height: 95px;
+    }
+    
+    .baby-status {
+        font-size: 13px;
+        padding: 6px 10px;
     }
     
     .doctor-character {
