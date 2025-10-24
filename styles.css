@@ -93,6 +93,8 @@ body {
     gap: 15px;
     justify-content: flex-end;
     padding-bottom: 40px;
+    position: relative;
+    z-index: 10;
 }
 
 .baby {
@@ -106,6 +108,7 @@ body {
     transition: transform 0.3s ease;
     position: relative;
     margin: 5px;
+    z-index: 100;
 }
 
 .baby:hover {

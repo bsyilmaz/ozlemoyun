@@ -295,39 +295,76 @@ class HospitalGuardGame {
         
         container.innerHTML = `
             <div class="rescue-header">💉 İğne Yapma!</div>
-            <div class="rescue-instructions">İğneyi bebek poposuna sürükleyip bırakın! (${this.injectionTarget} kez)</div>
-            <div style="display: flex; align-items: center; justify-content: space-around; gap: 30px; 
-                 padding: 20px; flex-wrap: wrap;">
-                <div id="baby-butt" style="width: 250px; height: 250px; 
+            <div class="rescue-instructions">Yeşil alana ${this.injectionTarget} kez tıklayın!</div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 30px;">
+                <div id="injection-counter" style="font-size: 48px; font-weight: bold; 
+                     color: #4CAF50; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                    ${this.injectionClicks}/${this.injectionTarget}
+                </div>
+                <div id="baby-butt-clickable" style="width: 300px; height: 300px; 
                      background-image: url('images/bebekpoposu.png'); background-size: contain; 
                      background-repeat: no-repeat; background-position: center; 
-                     border: 4px solid #4CAF50; border-radius: 20px; position: relative;">
+                     position: relative; cursor: pointer;
+                     transition: transform 0.2s ease;">
                     <div id="injection-zone" style="position: absolute; top: 50%; left: 50%; 
-                         transform: translate(-50%, -50%); width: 100px; height: 100px; 
-                         background: rgba(76, 175, 80, 0.3); border: 3px dashed #4CAF50; 
-                         border-radius: 50%; animation: pulseZone 1.5s infinite;"></div>
+                         transform: translate(-50%, -50%); width: 150px; height: 150px; 
+                         background: rgba(76, 175, 80, 0.4); border: 4px dashed #4CAF50; 
+                         border-radius: 50%; animation: pulseZone 1.5s infinite;
+                         display: flex; align-items: center; justify-content: center;
+                         font-size: 60px; user-select: none; pointer-events: none;">
+                        💉
+                    </div>
                 </div>
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-                    <div id="injection-counter" style="font-size: 36px; font-weight: bold; 
-                         color: #4CAF50;">
-                        ${this.injectionClicks}/${this.injectionTarget}
-                    </div>
-                    <div id="syringe" style="width: 120px; height: 120px; 
-                         background-image: url('images/igne.png'); background-size: contain; 
-                         background-repeat: no-repeat; background-position: center; cursor: grab; 
-                         border: 4px solid #2196F3; border-radius: 12px; 
-                         background-color: rgba(33, 150, 243, 0.2); 
-                         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-                         transition: transform 0.2s ease, box-shadow 0.2s ease;
-                         touch-action: none;"></div>
-                    <div style="font-size: 14px; color: #666; text-align: center; margin-top: 5px;">
-                        📱 Sürükle ve yeşil alana bırak
-                    </div>
+                <div style="font-size: 18px; color: #666; text-align: center; font-weight: 600;
+                     background: rgba(76, 175, 80, 0.1); padding: 15px 25px; border-radius: 12px;
+                     border: 2px solid #4CAF50;">
+                    👆 Yeşil alana tıkla!
                 </div>
             </div>
         `;
         
-        this.setupInjectionDragDrop();
+        // Basit tıklama sistemi
+        const babyButt = document.getElementById('baby-butt-clickable');
+        
+        const handleClick = (e) => {
+            e.preventDefault();
+            this.injectionClicks++;
+            
+            const counter = document.getElementById('injection-counter');
+            if (counter) {
+                counter.textContent = `${this.injectionClicks}/${this.injectionTarget}`;
+            }
+            
+            // Visual feedback
+            babyButt.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                babyButt.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Success feedback
+            const zone = document.getElementById('injection-zone');
+            if (zone) {
+                zone.style.background = 'rgba(76, 175, 80, 0.8)';
+                zone.innerHTML = '✅';
+                setTimeout(() => {
+                    zone.style.background = 'rgba(76, 175, 80, 0.4)';
+                    zone.innerHTML = '💉';
+                }, 300);
+            }
+            
+            if (this.injectionClicks >= this.injectionTarget) {
+                clearInterval(this.rescueTimer);
+                setTimeout(() => {
+                    this.endBabyRescueGame(true);
+                }, 500);
+            }
+        };
+        
+        babyButt.addEventListener('click', handleClick);
+        babyButt.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleClick(e);
+        });
         
         // Timer
         let timeLeft = 15;
