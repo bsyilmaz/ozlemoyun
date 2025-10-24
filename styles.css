@@ -1,0 +1,1094 @@
+/* Hospital Guard Game Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    overflow: hidden;
+    /* Touch optimization */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Game Header */
+.game-header {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.game-header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.game-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+}
+
+.stat-label {
+    opacity: 0.8;
+    font-size: 12px;
+}
+
+/* Main Game Area */
+.game-area {
+    flex: 1;
+    display: flex;
+    position: relative;
+    background: #f0f8ff;
+    background-image: url('images/hospital-room-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: calc(100vh - 80px);
+}
+
+/* Baby Ward (Left Side) */
+.baby-ward {
+    flex: 1;
+    background: rgba(232, 245, 232, 0.1);
+    border-right: 3px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(0.5px);
+    position: relative;
+    z-index: 2;
+}
+
+
+.babies-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-content: start;
+    min-height: 200px;
+    background: transparent;
+    position: relative;
+    z-index: 3;
+    justify-content: flex-end;
+}
+
+.baby {
+    width: 200px;
+    height: 200px;
+    background: transparent;
+    border: none;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    margin: 5px;
+    min-width: 200px;
+    min-height: 200px;
+    /* Mobile touch optimization */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    z-index: 4;
+}
+
+.baby:hover {
+    transform: scale(1.05);
+}
+
+.baby.normal {
+    /* Normal baby - no special styling */
+}
+
+.baby.critical {
+    animation: criticalPulse 1s infinite;
+}
+
+@keyframes criticalPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.baby.saved {
+    animation: savedGlow 0.5s ease-out;
+}
+
+@keyframes savedGlow {
+    0% { transform: scale(1.2); box-shadow: 0 0 20px #2196F3; }
+    100% { transform: scale(1); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+}
+
+.baby-sprite {
+    font-size: 30px;
+    margin-bottom: 5px;
+    width: 180px;
+    height: 180px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 5px auto;
+    min-height: 180px;
+    cursor: pointer;
+    position: relative;
+}
+
+.baby-status {
+    font-size: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.baby.normal .baby-status {
+    color: #4CAF50;
+}
+
+.baby.normal .baby-sprite {
+    background-image: url('images/baby-normal.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.baby.critical .baby-status {
+    color: #f44336;
+}
+
+.baby.critical .baby-sprite {
+    background-image: url('images/baby-hurt.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.baby.saved .baby-status {
+    color: #2196F3;
+}
+
+.baby.saved .baby-sprite {
+    background-image: url('images/baby-normal.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+/* Glass Window Divider */
+
+/* Doctor Station (Right Side) */
+.doctor-station {
+    flex: 1;
+    background: rgba(243, 229, 245, 0.1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    backdrop-filter: blur(0.5px);
+    z-index: 2;
+}
+
+
+.doctor-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.doctor-character {
+    text-align: center;
+    transition: all 0.3s ease;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 5;
+}
+
+.doctor-sprite {
+    font-size: 60px;
+    margin-bottom: 10px;
+    animation: doctorBreathe 2s infinite;
+    width: 180px;
+    height: 180px;
+    background-image: url('images/ozlem-intern-doktor-removebg-preview.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+}
+
+@keyframes doctorBreathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.doctor-status {
+    font-size: 14px;
+    color: #7b1fa2;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.doctor-character.alert {
+    animation: doctorAlert 0.5s infinite;
+}
+
+@keyframes doctorAlert {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Door */
+.door {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 80px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(139, 69, 19, 0.1);
+    border-radius: 5px;
+    border: 2px solid #8B4513;
+}
+
+.door-frame {
+    font-size: 40px;
+    text-align: center;
+    line-height: 80px;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: #8B4513;
+}
+
+.door:hover .door-frame {
+    background: rgba(139, 69, 19, 0.2);
+    transform: scale(1.1);
+}
+
+.door:hover {
+    background: rgba(139, 69, 19, 0.2);
+    transform: scale(1.05);
+}
+
+.door.open {
+    animation: doorOpen 0.5s ease-out;
+}
+
+@keyframes doorOpen {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(-90deg); }
+}
+
+/* Game Overlay for Mini-games */
+.game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Baby Rescue Mini-game */
+.baby-rescue-game {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.rescue-header h3 {
+    color: #f44336;
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.rescue-timer {
+    margin: 20px 0;
+    position: relative;
+}
+
+.rescue-bar {
+    width: 100%;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.rescue-progress {
+    height: 100%;
+    background: transparent;
+    width: 0%;
+    transition: width 0.1s linear;
+    /* animation: progressMove 2s linear infinite; */
+}
+
+@keyframes progressMove {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.rescue-target {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    width: 40%;
+    height: 100%;
+    background: rgba(76, 175, 80, 0.3);
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+.heart-image {
+    width: 100%;
+    height: 100%;
+    background-image: url('images/kalp.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.1s ease;
+}
+
+.syringe-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.1s ease;
+}
+
+.syringe-draggable {
+    width: 80px;
+    height: 80px;
+    background-image: url('images/igne.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: grab;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.1s ease;
+    z-index: 10;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    background-color: rgba(33, 150, 243, 0.1);
+}
+
+.syringe-draggable:active {
+    cursor: grabbing;
+}
+
+.baby-butt {
+    width: 200px;
+    height: 200px;
+    background-image: url('images/bebekpoposu.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 3px solid #4CAF50;
+    border-radius: 15px;
+    position: relative;
+}
+
+.injection-zone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(76, 175, 80, 0.3);
+    border: 2px dashed #4CAF50;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.rescue-instructions {
+    margin-top: 15px;
+    color: #666;
+}
+
+/* Quiz Popup Styles */
+.quiz-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .quiz-popup {
+        width: 95%;
+        max-width: 95%;
+        padding: 20px;
+        max-height: 90vh;
+    }
+    
+    .injection-game-container {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 20px !important;
+    }
+    
+    .baby-butt {
+        width: 150px !important;
+        height: 150px !important;
+    }
+    
+    .syringe-container {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    .syringe-draggable {
+        width: 60px !important;
+        height: 60px !important;
+    }
+}
+
+.quiz-content h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 16px;
+    text-align: left;
+    line-height: 1.4;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quiz-option {
+    padding: 12px 20px;
+    border: 2px solid #4CAF50;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.quiz-option:hover {
+    background: #f3e5f5;
+    transform: scale(1.02);
+}
+
+.quiz-option:active {
+    background: #4CAF50;
+    color: white;
+}
+
+/* Boss Fight Mini-game */
+.boss-fight-game {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.boss-header h3 {
+    color: #9C27B0;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.boss-health {
+    margin: 20px 0;
+}
+
+.health-bar {
+    width: 100%;
+    height: 25px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.health-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f44336 0%, #ff9800 50%, #4CAF50 100%);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+.health-text {
+    font-weight: bold;
+    color: #333;
+}
+
+.boss-character {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.gorkem-sprite {
+    font-size: 50px;
+    margin-bottom: 10px;
+    animation: gorkemIdle 2s infinite;
+    width: 100px;
+    height: 100px;
+    background-image: url('images/gorkem-normal.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+}
+
+@keyframes gorkemIdle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Görkem hurt state */
+.boss-character.hurt .gorkem-sprite {
+    background-image: url('images/gorkem-hurt-removebg-preview.png');
+    animation: gorkemHurt 0.5s infinite;
+}
+
+@keyframes gorkemHurt {
+    0%, 100% { 
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% { 
+        transform: scale(1.05);
+        filter: brightness(1.2);
+    }
+}
+
+.gorkem-status {
+    font-size: 14px;
+    color: #9C27B0;
+    font-weight: bold;
+}
+
+.medical-tools h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.tool-btn {
+    padding: 10px;
+    border: 2px solid #9C27B0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    /* Mobile touch optimization */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    min-height: 44px; /* Minimum touch target size */
+}
+
+.tool-btn:hover {
+    background: #f3e5f5;
+    transform: scale(1.05);
+}
+
+.tool-btn:active {
+    transform: scale(0.95);
+    background: #e1bee7;
+}
+
+.tool-btn.selected {
+    background: #9C27B0;
+    color: white;
+}
+
+/* Game Over Screen */
+.game-over-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.game-over-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.game-over-content h2 {
+    color: #f44336;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.final-stats {
+    margin: 20px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.final-stats p {
+    margin: 10px 0;
+}
+
+.restart-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    /* Mobile touch optimization */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    min-height: 44px;
+}
+
+.restart-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+/* Start Screen */
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+}
+
+.start-content {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.start-content h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+.start-content p {
+    color: #666;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.start-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    border-radius: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 30px;
+    /* Mobile touch optimization */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    min-height: 44px;
+}
+
+.start-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+/* Hospital Room Background Integration */
+.babies-container {
+    position: relative;
+    z-index: 2;
+}
+
+.doctor-area {
+    position: relative;
+    z-index: 2;
+}
+
+/* Add some hospital equipment styling */
+.ward-header::before {
+    content: "🏥";
+    margin-right: 10px;
+}
+
+.station-header::before {
+    content: "👨‍⚕️";
+    margin-right: 10px;
+}
+
+/* Enhanced glass effect to match hospital aesthetic */
+.glass-effect {
+    background: linear-gradient(45deg, 
+        transparent 20%, 
+        rgba(255, 255, 255, 0.4) 30%, 
+        rgba(255, 255, 255, 0.6) 50%, 
+        rgba(255, 255, 255, 0.4) 70%, 
+        transparent 80%);
+    animation: glassShine 4s infinite;
+}
+
+/* Mobile-First Responsive Design */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .game-container {
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile */
+    }
+    
+    .game-header {
+        padding: 10px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .game-header h1 {
+        font-size: 18px;
+        margin: 0;
+    }
+    
+    .game-stats {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .stat {
+        font-size: 12px;
+    }
+    
+    .game-area {
+        flex-direction: column;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+    
+    }
+    
+    .baby-ward, .doctor-station {
+        min-height: 50vh;
+        flex: 1;
+    }
+    
+    
+    .babies-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+        min-height: 200px;
+        justify-content: flex-end;
+        flex: 1;
+    }
+    
+    .baby {
+        width: 80px;
+        height: 80px;
+        margin: 5px;
+        min-width: 80px;
+        min-height: 80px;
+    }
+    
+    .baby-sprite {
+        width: 35px;
+        height: 35px;
+        min-height: 35px;
+        font-size: 20px;
+    }
+    
+    .baby-status {
+        font-size: 9px;
+    }
+    
+    .doctor-area {
+        padding: 15px;
+    }
+    
+    .doctor-sprite {
+        font-size: 40px;
+        width: 120px;
+        height: 120px;
+    }
+    
+    .doctor-status {
+        font-size: 12px;
+    }
+    
+    .door {
+        width: 50px;
+        height: 60px;
+        top: 15px;
+        right: 15px;
+    }
+    
+    .door-frame {
+        font-size: 30px;
+        line-height: 60px;
+    }
+    
+    /* Mini-games mobile optimization */
+    .baby-rescue-game, .boss-fight-game {
+        padding: 20px;
+        max-width: 90vw;
+        width: 90vw;
+    }
+    
+    .rescue-header h3, .boss-header h3 {
+        font-size: 20px;
+    }
+    
+    .rescue-bar {
+        height: 25px;
+    }
+    
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .tool-btn {
+        padding: 12px 8px;
+        font-size: 11px;
+    }
+    
+    .game-over-content, .start-content {
+        padding: 30px 20px;
+        max-width: 90vw;
+        width: 90vw;
+    }
+    
+    .start-content h1 {
+        font-size: 24px;
+    }
+    
+    .start-btn, .restart-btn {
+        padding: 15px 25px;
+        font-size: 16px;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+    .game-stats {
+        gap: 10px;
+    }
+    
+    .stat {
+        font-size: 11px;
+    }
+    
+    .babies-container {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px;
+    }
+    
+    .baby {
+        width: 70px;
+        height: 70px;
+        margin: 3px;
+        min-width: 70px;
+        min-height: 70px;
+    }
+    
+    .baby-sprite {
+        width: 30px;
+        height: 30px;
+        min-height: 30px;
+        font-size: 18px;
+    }
+    
+    .baby-status {
+        font-size: 8px;
+    }
+    
+    .doctor-sprite {
+        font-size: 35px;
+        width: 70px;
+        height: 70px;
+    }
+    
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .tool-btn {
+        padding: 10px 6px;
+        font-size: 10px;
+    }
+}
+
+/* Landscape orientation for phones */
+@media (max-width: 768px) and (orientation: landscape) {
+    .game-area {
+        flex-direction: row;
+    }
+    
+    }
+    
+    .baby-ward, .doctor-station {
+        min-height: 100vh;
+    }
+    
+    .babies-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .baby {
+        width: 150px;
+        height: 150px;
+        margin: 3px;
+        min-width: 150px;
+        min-height: 150px;
+    }
+    
+    .baby-sprite {
+        width: 130px;
+        height: 130px;
+        min-height: 130px;
+        font-size: 16px;
+    }
+}

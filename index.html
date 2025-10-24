@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hastane Bekçisi - Hospital Guard Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Hastane Bekçisi">
+    <meta name="application-name" content="Hastane Bekçisi">
+    <meta name="msapplication-TileColor" content="#4CAF50">
+    <meta name="msapplication-tap-highlight" content="no">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Game Header -->
+        <div class="game-header">
+            <h1>🏥 Hastane Bekçisi</h1>
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="stat-label">Zaman:</span>
+                    <span id="timer">00:00</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Kurtarılan:</span>
+                    <span id="saved-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Skor:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Kayıp:</span>
+                    <span id="lost-count">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div class="game-area">
+            <!-- Baby Ward (Left Side) -->
+            <div class="baby-ward">
+                <div class="babies-container" id="babies-container">
+                    <!-- Babies will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Glass Window Divider -->
+
+            <!-- Doctor Station (Right Side) -->
+            <div class="doctor-station">
+                <div class="doctor-area">
+                    <div class="doctor-character" id="doctor">
+                        <div class="doctor-sprite"></div>
+                        <div class="doctor-status">İzliyor...</div>
+                    </div>
+                </div>
+                
+                <!-- Door for Görkem -->
+                <div class="door" id="door">
+                    <div class="door-frame">🚪</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Overlay for Mini-games -->
+        <div class="game-overlay" id="game-overlay" style="display: none;">
+            <!-- Baby Rescue Mini-game -->
+            <div class="baby-rescue-game" id="baby-rescue-game" style="display: none;">
+                <div class="rescue-header">
+                    <h3>🚨 Bebek Kurtarma!</h3>
+                    <p>Doğru zamanda tıklayın!</p>
+                </div>
+                <div class="rescue-timer">
+                    <div class="rescue-bar">
+                        <div class="rescue-progress" id="rescue-progress"></div>
+                    </div>
+                    <div class="rescue-target" id="rescue-target"></div>
+                </div>
+                <div class="rescue-instructions">
+                    <p>Yeşil alana geldiğinde tıklayın!</p>
+                </div>
+            </div>
+
+            <!-- Boss Fight Mini-game -->
+            <div class="boss-fight-game" id="boss-fight-game" style="display: none;">
+                <div class="boss-header">
+                    <h3>⚔️ Patronu Döv - Görkem ile Savaş!</h3>
+                    <div class="boss-health">
+                        <div class="health-bar">
+                            <div class="health-fill" id="boss-health-fill"></div>
+                        </div>
+                        <span class="health-text">Görkem'in Canı: <span id="boss-health-text">100</span></span>
+                    </div>
+                </div>
+                <div class="boss-character">
+                    <div class="gorkem-sprite"></div>
+                    <div class="gorkem-status">Kahve içiyor...</div>
+                </div>
+                <div class="medical-tools">
+                    <h4>Tıbbi Aletler:</h4>
+                    <div class="tools-grid">
+                        <button class="tool-btn" data-tool="syringe">💉 Şırınga</button>
+                        <button class="tool-btn" data-tool="stethoscope">🩺 Stetoskop</button>
+                        <button class="tool-btn" data-tool="thermometer">🌡️ Termometre</button>
+                        <button class="tool-btn" data-tool="scalpel">🔪 Bistüri</button>
+                        <button class="tool-btn" data-tool="bandage">🩹 Bandaj</button>
+                        <button class="tool-btn" data-tool="pill">💊 İlaç</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div class="game-over-screen" id="game-over-screen" style="display: none;">
+            <div class="game-over-content">
+                <h2>🎮 Oyun Bitti!</h2>
+                <div class="final-stats">
+                    <p>Toplam Süre: <span id="final-time">00:00</span></p>
+                    <p>Kurtarılan Bebek: <span id="final-saved">0</span></p>
+                    <p>Kaybedilen Bebek: <span id="final-lost">0</span></p>
+                    <p>Final Skor: <span id="final-score">0</span></p>
+                </div>
+                <button class="restart-btn" id="restart-btn">🔄 Tekrar Oyna</button>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="start-screen" id="start-screen">
+            <div class="start-content">
+                <h1>🏥 Hastane Bekçisi</h1>
+                <p>Yenidoğan bebekleri izleyin ve onları kurtarın!</p>
+                <p>Görkem geldiğinde onu yenin!</p>
+                <button class="start-btn" id="start-btn">🎮 Oyunu Başlat</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
